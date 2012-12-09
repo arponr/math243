@@ -12,6 +12,8 @@ if __name__ == "__main__":
                 if not k in results:
                     results[k] = []
                 results[k].extend(v)
-    for run in results['avg']:
-        plt.plot(run)
-    plt.savefig(outname)
+    for i in xrange(len(results['ast'])):
+        plt.plot(results['ast'][i])
+        plt.plot(results['arp'][i])
+        plt.show()
+    #plt.savefig(outname)
