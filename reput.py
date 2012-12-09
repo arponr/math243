@@ -8,6 +8,27 @@ import cPickle
 from multiprocessing import Process, Queue
 
 SEL = 1
+ITER = 10
+# pagerank teleportation rate
+ALPHA = 0.85
+# interaction cost
+C = .1
+# interaction benefit
+B = .2
+# number of interactions per round
+MEETS = 100
+# mutation for strategy
+MU_STG = .001
+# mutation for pagerank-iterations
+MU_IND = .001
+# population size
+N = 100
+# number of rounds
+STEPS = 50000
+# how often to print progress
+DUMP = 1000
+# number of threads
+PROC = 4
 
 def wrand(weight):
     a = random.random() * weight.sum()
@@ -22,61 +43,64 @@ def normalise(A):
         A[:, i] /= max(A[:, i].sum(), 1)
     return A
 
-def pagerank(A, alpha=.85, epsilon=1e-10):
+def pagerank(A):
     unif = np.ones(len(A)) / len(A)
-    x = unif.copy()
-    delta = epsilon + 1
-    while delta > epsilon:
-        y = alpha * np.dot(A, x) + (1 - alpha) * unif
-        delta = abs(y - x).sum()
-        x = y.copy()
+    x = np.zeros((ITER+1, len(A)))
+    x[0] = unif.copy()
+    for i in xrange(ITER):
+        x[i+1] = ALPHA * np.dot(A, x[i]) + (1 - ALPHA) * unif
     return x
 
-def interact(fit, opi, rep, stg, n, c, b):
+def interact(fit, opi, rep, stg, ind):
     cur = np.zeros(opi.shape)
-    for t in xrange(n):
+    for t in xrange(MEETS):
         don, rec = random.sample(xrange(len(rep)), 2)
-        if rep[rec] > stg[don]:
+        if rep[ind[don]][rec] > stg[don]:
             cur[don][rec] += 1
-            fit[don] -= c*SEL
-            fit[rec] += b*SEL
+            fit[don] -= C * SEL
+            fit[rec] += B * SEL
     opi = normalise((opi + cur) / 2)
     return fit, opi
 
-def evolve(fit, opi, rep, stg, mu):
+def evolve(fit, opi, rep, stg, ind):
     pro = wrand(fit)
     die = random.randrange(len(fit))
-    fit[die], rep[die] = fit[pro], rep[pro]
-    if random.random() < mu:
+    fit[die], rep[:, die] = fit[pro], rep[:, pro]
+    if random.random() < MU_STG:
         stg[die] = random.random()
     else:
         stg[die] = stg[pro]
+    if random.random() < MU_IND:
+        ind[die] = random.randrange(ITER+1)
+    else:
+        ind[die] = ind[pro]
     opi[die] = opi[pro]
     opi[:, die] = opi[:, pro]
     opi = normalise(opi)
     return fit, opi, rep, stg
 
-def run_on_proc(q, N, n, p):
+def run_on_proc(q, pr):
     fit = np.ones(N)
     opi = np.identity(N)
     stg = nprand.rand(N)
+    ind = nprand.random_integers(0, 10, N)
     avg = []
-    for t in xrange(n):
-        if p * t % n == 0:
-            print 'step', t
+    for t in xrange(STEPS):
+        if t % DUMP == 0:
+            print 'proc %d: step %d' % (pr, t)
             avg.append(stg.sum() / N)
         rep = pagerank(opi)
-        fit, opi = interact(fit, opi, rep, stg, 100, .1, .2)
-        fit, opi, rep, stg = evolve(fit, opi, rep, stg, .001)
-    q.put({'fit':fit, 'stg':stg, 'rep':rep, 'avg':avg})
+        fit, opi = interact(fit, opi, rep, stg, ind)
+        fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
+    q.put({'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 'avg':avg})
 
-def run(N, n, p, np = 4):
+def run():
     q = Queue()
-    for i in xrange(np):
-        proc = Process(target=run_on_proc, args=(q, N, n, p))
+    for i in xrange(PROC):
+        proc = Process(target=run_on_proc, args=(q, i))
         proc.start()
     arrs = {}
-    for i in xrange(np):
+    for i in xrange(PROC):
         rets = q.get()
         for (k, ret) in rets.iteritems():
             if not k in arrs:
@@ -88,6 +112,6 @@ if __name__ == "__main__":
     fname = sys.argv[1]
     if not fname.endswith('.out'):
         fname = fname + '.out'
-    result = run(100, 100000, 10000)
+    result = run()
     with open(fname, 'w') as out:
         cPickle.dump(result, out)
