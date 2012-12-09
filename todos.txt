@@ -8,6 +8,8 @@ Knowledge:
     Only know an induced subgraph of interactions, quadratic cost for larger subgraph
 Reproduction:
     Reset reputation
+    mutation rate/what to mutate
+    mutate by reset with some chance or by adding a random amount
 Strategy:
     make probabilistic
     most general--function from reputation to probability

@@ -7,6 +7,8 @@ import sys
 import cPickle
 from multiprocessing import Process, Queue
 
+SEL = 1
+
 def wrand(weight):
     a = random.random() * weight.sum()
     for i, w in enumerate(weight):
@@ -36,8 +38,8 @@ def interact(fit, opi, rep, stg, n, c, b):
         don, rec = random.sample(xrange(len(rep)), 2)
         if rep[rec] > stg[don]:
             cur[don][rec] += 1
-            fit[don] -= c
-            fit[rec] += b
+            fit[don] -= c*SEL
+            fit[rec] += b*SEL
     opi = normalise((opi + cur) / 2)
     return fit, opi
 
