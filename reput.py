@@ -148,6 +148,15 @@ def run():
 
 if __name__ == "__main__":
     fname = sys.argv[1]
+    params = sys.argv[2:]
+    g = globals()
+    sets = {}
+    for param in params:
+        name, expr = param.split('=',1)
+        if not name in g:
+            print 'WARNING: no param', name
+        sets[name] = eval(expr)
+    g.update(sets)
     if not fname.endswith('.out'):
         fname = fname + '.out'
     result = run()
