@@ -61,8 +61,8 @@ def interact(fit, opi, rep, stg, ind):
     cur = np.zeros(opi.shape)
     for t in xrange(MEETS):
         don, rec = random.sample(xrange(len(rep)), 2)
-        if (rep[rec] > stg[don] and random.random() > ERR or
-            rep[rec] < stg[don] and random.random() < ERR): 
+        if (rep[ind[don]][rec] > stg[don] and random.random() > ERR or
+            rep[ind[don]][rec] < stg[don] and random.random() < ERR): 
             cur[don][rec] += 1
             fit[don] -= C * SEL
             fit[rec] += B * SEL
