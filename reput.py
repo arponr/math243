@@ -1,8 +1,10 @@
 from __future__ import division
 import numpy as np
-import  numpy.random as nprand
+import numpy.random as nprand
 import pylab
 import random
+import sys
+import cPickle
 from multiprocessing import Process, Queue
 
 def wrand(weight):
@@ -79,10 +81,9 @@ def run(N, n, p, np = 4):
     return arrs
 
 if __name__ == "__main__":
-    fit, stg, rep, avg = run(100, 100000, 10000)
-    print fit
-    print stg
-    print rep
-    #pylab.plot(np.arange(len(avg)), np.array(avg))
-    #pylab.show()
-                   
+    fname = sys.argv[1]
+    if not fname.endswith('.out'):
+        fname = fname + '.out'
+    fit, stg, rep, avg = run(100, 100, 10000)
+    with open(fname, 'w') as out:
+        cPickle.dump({'fit':fit, 'stg':stg, 'rep':rep, 'avg':avg}, out)
