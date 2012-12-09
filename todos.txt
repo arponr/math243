@@ -1,0 +1,12 @@
+Different reproduction methods
+ - reset rep on death (play with death rate)
+Modifications of PageRank
+ - limited iterations
+ - different limitations per-person (evolutionary parameter?)
+ - PageRank subgraph
+Different strategies
+ - probabilistic vs. threshold
+ - functional probabilistic (ouch)
+Fitness calculation
+ - weaker selection
+ - penalize for higher computational power
