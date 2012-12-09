@@ -20,17 +20,17 @@ B = 10
 # number of interactions per round
 MEETS = 100
 # mutation probability for strategy
-MU_STG = .001
+MU_STG = .0001
 # mutation probability for pagerank-iterations
-MU_IND = .001
+MU_IND = .0001
 # population size
 N = 100
 # number of rounds
-STEPS = 50000
+STEPS = 10000
 # how often to print progress
 DUMP = 10
 # number of threads
-PROC = 4
+PROC = 2
 # reset everyone's opinions of offspring
 DIE_RESET = False
 # error rate in actions
@@ -47,17 +47,18 @@ def wrand(weight):
             return i
 
 def normalise(A):
+    B = np.zeros(A.shape)
     for i in xrange(len(A)):
-        A[:, i] /= max(A[:, i].sum(), 1)
-    return A
+        B[:,i] = A[:,i] / A[:,i].sum()
+    return B
 
 def pagerank(A):
-    A = normalise(A)
-    unif = np.ones(len(A)) / len(A)
-    x = np.zeros((ITER+1, len(A)))
+    B = normalise(A)
+    unif = np.ones(len(B)) / len(B)
+    x = np.zeros((ITER+1, len(B)))
     x[0] = unif.copy()
     for i in xrange(ITER):
-        x[i+1] = ALPHA * np.dot(A, x[i]) + (1 - ALPHA) * unif
+        x[i+1] = ALPHA * np.dot(B, x[i]) + (1 - ALPHA) * unif
     return x
 
 def interact(fit, opi, rep, stg, ind):
@@ -69,22 +70,21 @@ def interact(fit, opi, rep, stg, ind):
             fit[rec] += B * SEL
         opi[don][rec] /= 2
     if ROBIN:
-        n = len(fit)
-        for don in xrange(n):
-            for rec in xrange(n):
+        for don in xrange(N):
+            for rec in xrange(N):
                 if don == rec:
                     continue
                 interact_one(don, rec)
     else:
         for t in xrange(MEETS):
-            don, rec = random.sample(xrange(len(rep)), 2)
+            don, rec = random.sample(xrange(N), 2)
             interact_one(don, rec)
     return fit, opi
 
 def evolve(fit, opi, rep, stg, ind):
     pro = wrand(fit)
-    die = random.randrange(len(fit))
-    fit[die], rep[:, die] = fit[pro], rep[:, pro]
+    die = random.randrange(N)
+    fit[die], rep[:,die] = fit[pro], rep[:,pro]
     if random.random() < MU_STG:
         stg[die] = random.random()
     else:
@@ -105,25 +105,28 @@ def evolve(fit, opi, rep, stg, ind):
 
 def run_on_proc(q, pr):
     fit = np.ones(N)
-    opi = np.identity(N)
+    opi = 2 * np.identity(N)
     stg = nprand.rand(N)
-    ind = nprand.random_integers(0, 10, N)
+    ind = nprand.random_integers(0, ITER, N)
     ast = np.zeros(STEPS)
     arp = np.zeros(STEPS)
+    ain = np.zeros(STEPS)
     for t in xrange(STEPS):
         if t % DUMP == 0:
             print 'proc %d: step %d' % (pr, t)
         rep = pagerank(opi) * opi.sum() / (2*N)
         ast[t] = stg.sum() / N
-        arp[t] = rep.sum() / N
+        arp[t] = rep.sum() / (N * ITER)
+        ain[t] = ind.sum() / N
         fit, opi = interact(fit, opi, rep, stg, ind)
         fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
-    q.put({'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 'ast':ast, 'arp':arp})
+    q.put({'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 
+           'ast':ast, 'arp':arp, 'ain':ain})
 
 def run():
     q = Queue()
     for i in xrange(PROC):
-        proc = Process(target=run_on_proc, args=(q, i))
+        proc = Process(target=run_on_proc, args=(q,i))
         proc.start()
     arrs = {}
     for i in xrange(PROC):
