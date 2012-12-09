@@ -9,6 +9,8 @@ from multiprocessing import Process, Queue
 
 #Selection strength
 SEL = 1
+# reset everyone's opinions of offspring
+DIE_RESET = False
 #Error rate in actions
 ERR = 0
 
@@ -54,8 +56,12 @@ def evolve(fit, opi, rep, stg, mu):
         stg[die] = random.random()
     else:
         stg[die] = stg[pro]
-    opi[die] = opi[pro]
-    opi[:, die] = opi[:, pro]
+    if DIE_RESET:
+        opi[die] = 1
+        opi[:,die] = 1
+    else:
+        opi[die] = opi[pro]
+        opi[:, die] = opi[:, pro]
     opi = normalise(opi)
     return fit, opi, rep, stg
 
@@ -73,7 +79,7 @@ def run_on_proc(q, N, n, p):
         fit, opi, rep, stg = evolve(fit, opi, rep, stg, .001)
     q.put({'fit':fit, 'stg':stg, 'rep':rep, 'avg':avg})
 
-def run(N, n, p, np = 4):
+def run(N, n, p, np = 1):
     q = Queue()
     for i in xrange(np):
         proc = Process(target=run_on_proc, args=(q, N, n, p))
@@ -91,6 +97,6 @@ if __name__ == "__main__":
     fname = sys.argv[1]
     if not fname.endswith('.out'):
         fname = fname + '.out'
-    result = run(100, 100000, 10000)
+    result = run(100, 100, 10000)
     with open(fname, 'w') as out:
         cPickle.dump(result, out)
