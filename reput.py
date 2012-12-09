@@ -108,15 +108,17 @@ def run_on_proc(q, pr):
     opi = np.identity(N)
     stg = nprand.rand(N)
     ind = nprand.random_integers(0, 10, N)
-    avg = []
+    ast = np.zeros(STEPS)
+    arp = np.zeros(STEPS)
     for t in xrange(STEPS):
         if t % DUMP == 0:
             print 'proc %d: step %d' % (pr, t)
-            avg.append(stg.sum() / N)
         rep = pagerank(opi) * opi.sum() / (2*N)
+        ast[t] = stg.sum() / N
+        arp[t] = rep.sum() / N
         fit, opi = interact(fit, opi, rep, stg, ind)
         fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
-    q.put({'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 'avg':avg})
+    q.put({'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 'ast':ast, 'arp':arp})
 
 def run():
     q = Queue()
