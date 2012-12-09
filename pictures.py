@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt, sys
 import cPickle
 
 if __name__ == "__main__":
-    fnames = sys.argv[1:]
+    outname = sys.argv[1]
+    fnames = sys.argv[2:]
     results = {}
     for fname in fnames:
         with open(fname) as f:
@@ -13,5 +14,4 @@ if __name__ == "__main__":
                 results[k].extend(v)
     for run in results['avg']:
         plt.plot(run)
-    plt.show()
-
+    plt.savefig(outname)

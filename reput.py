@@ -35,6 +35,8 @@ PROC = 4
 DIE_RESET = False
 #Error rate in actions
 ERR = 0
+# true: interact round-robin; false: interact randomly
+ROBIN = False
 
 def wrand(weight):
     a = random.random() * weight.sum()
@@ -59,18 +61,25 @@ def pagerank(A):
     return x
 
 def interact(fit, opi, rep, stg, ind):
-    cur = np.zeros(opi.shape)
-    coop = 0
-    for t in xrange(MEETS):
-        don, rec = random.sample(xrange(len(rep)), 2)
+    def interact_one(don, rec):
         if (rep[ind[don]][rec] > stg[don] and random.random() > ERR or
             rep[ind[don]][rec] < stg[don] and random.random() < ERR): 
-            cur[don][rec] += 1
+            opi[don][rec] += 1
             fit[don] -= C * SEL
             fit[rec] += B * SEL
-            coop += 1
-    opi = (opi + cur) / 2
-    return fit, opi, coop
+        opi[don][rec] /= 2
+    if ROBIN:
+        n = len(fit)
+        for don in xrange(n):
+            for rec in xrange(n):
+                if don == rec:
+                    continue
+                interact_one(don, rec)
+    else:
+        for t in xrange(MEETS):
+            don, rec = random.sample(xrange(len(rep)), 2)
+            interact_one(don, rec)
+    return fit, opi
 
 def evolve(fit, opi, rep, stg, ind):
     pro = wrand(fit)
@@ -91,8 +100,7 @@ def evolve(fit, opi, rep, stg, ind):
         opi[:,die] = 1
     else:
         opi[die] = opi[pro]
-        opi[:,die] = opi[:,pro]
-    opi = normalise(opi)
+        opi[:, die] = opi[:, pro]
     return fit, opi, rep, stg
 
 def run_on_proc(q, pr):
@@ -105,7 +113,7 @@ def run_on_proc(q, pr):
         if t % DUMP == 0:
             print 'proc %d: step %d' % (pr, t)
             avg.append(stg.sum() / N)
-        rep = pagerank(opi)
+        rep = pagerank(opi) * opi.sum() / (2*N)
         fit, opi = interact(fit, opi, rep, stg, ind)
         fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
     q.put({'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 'avg':avg})
