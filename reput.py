@@ -7,7 +7,9 @@ import sys
 import cPickle
 from multiprocessing import Process, Queue
 
+# selection strength
 SEL = 1
+# max pagerank-iterations
 ITER = 10
 # pagerank teleportation rate
 ALPHA = 0.85
@@ -24,11 +26,15 @@ MU_IND = .001
 # population size
 N = 100
 # number of rounds
-STEPS = 50000
+STEPS = 5000
 # how often to print progress
 DUMP = 1000
 # number of threads
 PROC = 4
+# reset everyone's opinions of offspring
+DIE_RESET = False
+#Error rate in actions
+ERR = 0
 
 def wrand(weight):
     a = random.random() * weight.sum()
@@ -55,7 +61,8 @@ def interact(fit, opi, rep, stg, ind):
     cur = np.zeros(opi.shape)
     for t in xrange(MEETS):
         don, rec = random.sample(xrange(len(rep)), 2)
-        if rep[ind[don]][rec] > stg[don]:
+        if (rep[rec] > stg[don] and random.random() > ERR or
+            rep[rec] < stg[don] and random.random() < ERR): 
             cur[don][rec] += 1
             fit[don] -= C * SEL
             fit[rec] += B * SEL
@@ -76,6 +83,12 @@ def evolve(fit, opi, rep, stg, ind):
         ind[die] = ind[pro]
     opi[die] = opi[pro]
     opi[:, die] = opi[:, pro]
+    if DIE_RESET:
+        opi[die] = 1
+        opi[:,die] = 1
+    else:
+        opi[die] = opi[pro]
+        opi[:, die] = opi[:, pro]
     opi = normalise(opi)
     return fit, opi, rep, stg
 
