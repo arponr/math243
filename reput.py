@@ -8,15 +8,15 @@ import cPickle
 from multiprocessing import Process, Queue
 
 # selection strength
-SEL = 1
+SEL = .1
 # max pagerank-iterations
 ITER = 10
 # pagerank non-teleportation rate
 ALPHA = 0.85
 # interaction cost
-C = .1
+C = 1
 # interaction benefit
-B = .2
+B = 10
 # number of interactions per round
 MEETS = 100
 # mutation probability for strategy
