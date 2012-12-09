@@ -122,7 +122,10 @@ def run_on_proc(q, pr):
             print 'proc %d: step %d' % (pr, t)
         rep = pagerank(opi) * opi.sum() / N
         ast[t] = stg.sum() / N
-        arp[t] = rep.sum() / (N * (ITER + 1))
+        if MU_IND == 0:
+            arp[t] = rep[ITER].sum() / N
+        else:
+            arp[t] = rep.sum() / (N * (ITER + 1))
         ain[t] = ind.sum() / N
         fit, opi = interact(fit, opi, rep, stg, ind)
         fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
