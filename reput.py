@@ -16,7 +16,7 @@ ALPHA = 0.85
 # interaction cost
 C = 1
 # interaction benefit
-B = 10
+B = 1.1
 # number of interactions per round
 MEETS = 500
 # mutation probability for strategy
@@ -26,11 +26,11 @@ MU_IND = 0 #MU_IND = .0001
 # population size
 N = 100
 # number of rounds
-STEPS = 50000
+STEPS = 10000
 # how often to print progress
 DUMP = 10
 # number of threads
-PROC = 4
+PROC = 1
 # reset everyone's opinions of offspring
 DIE_RESET = False
 # error rate in actions
