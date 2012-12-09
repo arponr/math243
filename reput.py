@@ -3,6 +3,7 @@ import numpy as np
 import  numpy.random as nprand
 import pylab
 import random
+from multiprocessing import Process, Queue
 
 def wrand(weight):
     a = random.random() * weight.sum()
@@ -51,7 +52,7 @@ def evolve(fit, opi, rep, stg, mu):
     opi = normalise(opi)
     return fit, opi, rep, stg
 
-def run(N, n, p):
+def run_on_proc(q, N, n, p):
     fit = np.ones(N)
     opi = np.identity(N)
     stg = nprand.rand(N)
@@ -63,13 +64,25 @@ def run(N, n, p):
         rep = pagerank(opi)
         fit, opi = interact(fit, opi, rep, stg, 100, .1, .2)
         fit, opi, rep, stg = evolve(fit, opi, rep, stg, .001)
-    return fit, stg, rep, avg
+    q.put((fit, stg, rep, avg))
+
+def run(N, n, p, np = 4):
+    q = Queue()
+    for i in xrange(np):
+        proc = Process(target=run_on_proc, args=(q, N, n, p))
+        proc.start()
+    arrs = [[] for i in xrange(4)]
+    for i in xrange(np):
+        rets = q.get()
+        for (i, ret) in enumerate(rets):
+            arrs[i].append(ret)
+    return arrs
 
 if __name__ == "__main__":
     fit, stg, rep, avg = run(100, 100000, 10000)
     print fit
     print stg
     print rep
-    pylab.plot(np.arange(len(avg)), np.array(avg))
-    pylab.show()
+    #pylab.plot(np.arange(len(avg)), np.array(avg))
+    #pylab.show()
                    
