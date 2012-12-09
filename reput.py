@@ -7,9 +7,12 @@ import sys
 import cPickle
 from multiprocessing import Process, Queue
 
+#Selection strength
 SEL = 1
 # reset everyone's opinions of offspring
 DIE_RESET = False
+#Error rate in actions
+ERR = 0
 
 def wrand(weight):
     a = random.random() * weight.sum()
@@ -38,7 +41,7 @@ def interact(fit, opi, rep, stg, n, c, b):
     cur = np.zeros(opi.shape)
     for t in xrange(n):
         don, rec = random.sample(xrange(len(rep)), 2)
-        if rep[rec] > stg[don]:
+        if (rep[rec] > stg[don] and random.random() > ERR) or (rep[rec] < stg[don] and random.random() < ERR):
             cur[don][rec] += 1
             fit[don] -= c*SEL
             fit[rec] += b*SEL
