@@ -11,8 +11,7 @@ Reproduction:
     mutation rate/what to mutate
     mutate by reset with some chance or by adding a random amount
 Strategy:
-    make probabilistic
-    probability of errors
+    probability of errors#
     most general--function from reputation to probability
 Selection:
     Make weak#

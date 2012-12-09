@@ -7,7 +7,9 @@ import sys
 import cPickle
 from multiprocessing import Process, Queue
 
+#Selection strength
 SEL = 1
+#Error rate in actions
 ERR = 0
 
 def wrand(weight):
