@@ -20,15 +20,15 @@ B = .2
 # number of interactions per round
 MEETS = 100
 # mutation for strategy
-MU_STG = .001
+MU_STG = .0001
 # mutation for pagerank-iterations
-MU_IND = .001
+MU_IND = .0001
 # population size
 N = 100
 # number of rounds
-STEPS = 5000
+STEPS = 50000
 # how often to print progress
-DUMP = 1000
+DUMP = 10
 # number of threads
 PROC = 4
 # reset everyone's opinions of offspring
@@ -50,6 +50,7 @@ def normalise(A):
     return A
 
 def pagerank(A):
+    A = normalise(A)
     unif = np.ones(len(A)) / len(A)
     x = np.zeros((ITER+1, len(A)))
     x[0] = unif.copy()
@@ -59,6 +60,7 @@ def pagerank(A):
 
 def interact(fit, opi, rep, stg, ind):
     cur = np.zeros(opi.shape)
+    coop = 0
     for t in xrange(MEETS):
         don, rec = random.sample(xrange(len(rep)), 2)
         if (rep[ind[don]][rec] > stg[don] and random.random() > ERR or
@@ -66,8 +68,9 @@ def interact(fit, opi, rep, stg, ind):
             cur[don][rec] += 1
             fit[don] -= C * SEL
             fit[rec] += B * SEL
-    opi = normalise((opi + cur) / 2)
-    return fit, opi
+            coop += 1
+    opi = (opi + cur) / 2
+    return fit, opi, coop
 
 def evolve(fit, opi, rep, stg, ind):
     pro = wrand(fit)
@@ -82,13 +85,13 @@ def evolve(fit, opi, rep, stg, ind):
     else:
         ind[die] = ind[pro]
     opi[die] = opi[pro]
-    opi[:, die] = opi[:, pro]
+    opi[:,die] = opi[:,pro]
     if DIE_RESET:
         opi[die] = 1
         opi[:,die] = 1
     else:
         opi[die] = opi[pro]
-        opi[:, die] = opi[:, pro]
+        opi[:,die] = opi[:,pro]
     opi = normalise(opi)
     return fit, opi, rep, stg
 
