@@ -66,24 +66,26 @@ def run_on_proc(q, N, n, p):
         rep = pagerank(opi)
         fit, opi = interact(fit, opi, rep, stg, 100, .1, .2)
         fit, opi, rep, stg = evolve(fit, opi, rep, stg, .001)
-    q.put((fit, stg, rep, avg))
+    q.put({'fit':fit, 'stg':stg, 'rep':rep, 'avg':avg})
 
 def run(N, n, p, np = 4):
     q = Queue()
     for i in xrange(np):
         proc = Process(target=run_on_proc, args=(q, N, n, p))
         proc.start()
-    arrs = [[] for i in xrange(4)]
+    arrs = {}
     for i in xrange(np):
         rets = q.get()
-        for (i, ret) in enumerate(rets):
-            arrs[i].append(ret)
+        for (k, ret) in rets.iteritems():
+            if not k in arrs:
+                arrs[k] = []
+            arrs[k].append(ret)
     return arrs
 
 if __name__ == "__main__":
     fname = sys.argv[1]
     if not fname.endswith('.out'):
         fname = fname + '.out'
-    fit, stg, rep, avg = run(100, 100, 10000)
+    result = run(100, 100000, 10000)
     with open(fname, 'w') as out:
-        cPickle.dump({'fit':fit, 'stg':stg, 'rep':rep, 'avg':avg}, out)
+        cPickle.dump(result, out)
