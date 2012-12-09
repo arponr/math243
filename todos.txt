@@ -1,12 +1,15 @@
-Different reproduction methods
- - reset rep on death (play with death rate)
-Modifications of PageRank
- - limited iterations
- - different limitations per-person (evolutionary parameter?)
- - PageRank subgraph
-Different strategies
- - probabilistic vs. threshold
- - functional probabilistic (ouch)
-Fitness calculation
- - weaker selection
- - penalize for higher computational power
+To check:
+
+Analysis:
+    less iterations for PageRank
+    Different restrictions for different individuals, linear cost for more iterations
+Knowledge:
+    Only know some of the interactions, linear cost for knowing more
+    Only know an induced subgraph of interactions, quadratic cost for larger subgraph
+Reproduction:
+    Reset reputation
+Strategy:
+    make probabilistic
+    most general--function from reputation to probability
+Selection:
+    Make weak
