@@ -12,6 +12,8 @@ if __name__ == "__main__":
                 if not k in results:
                     results[k] = []
                 results[k].extend(v)
+    w = 4
+    h = 3
     for i in xrange(len(results['ast'])):
         plt.plot(results['ast'][i])
         plt.plot(results['arp'][i])

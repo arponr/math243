@@ -18,25 +18,27 @@ C = 1
 # interaction benefit
 B = 10
 # number of interactions per round
-MEETS = 100
+MEETS = 500
 # mutation probability for strategy
 MU_STG = .0001
 # mutation probability for pagerank-iterations
-MU_IND = .0001
+MU_IND = 0 #MU_IND = .0001
 # population size
 N = 100
 # number of rounds
-STEPS = 10000
+STEPS = 50000
 # how often to print progress
 DUMP = 10
 # number of threads
-PROC = 2
+PROC = 4
 # reset everyone's opinions of offspring
 DIE_RESET = False
 # error rate in actions
 ERR = 0
 # true: interact round-robin; false: interact randomly
 ROBIN = False
+# true: remember the past (with discounting); false: don't
+MEMORY = False
 
 def wrand(weight):
     a = random.random() * weight.sum()
@@ -47,10 +49,7 @@ def wrand(weight):
             return i
 
 def normalise(A):
-    B = np.zeros(A.shape)
-    for i in xrange(len(A)):
-        B[:,i] = A[:,i] / A[:,i].sum()
-    return B
+    return A / A.sum(1)
 
 def pagerank(A):
     B = normalise(A)
@@ -63,12 +62,16 @@ def pagerank(A):
 
 def interact(fit, opi, rep, stg, ind):
     def interact_one(don, rec):
+        new = 0
         if (rep[ind[don]][rec] > stg[don] and random.random() > ERR or
-            rep[ind[don]][rec] < stg[don] and random.random() < ERR): 
-            opi[don][rec] += 1
+            rep[ind[don]][rec] < stg[don] and random.random() < ERR):
+            new = 1
             fit[don] -= C * SEL
             fit[rec] += B * SEL
-        opi[don][rec] /= 2
+        if MEMORY:
+            opi[don][rec] = (opi[don][rec] + new/2) / 2
+        else:
+            opi[don][rec] = new
     if ROBIN:
         for don in xrange(N):
             for rec in xrange(N):
@@ -105,18 +108,21 @@ def evolve(fit, opi, rep, stg, ind):
 
 def run_on_proc(q, pr):
     fit = np.ones(N)
-    opi = 2 * np.identity(N)
+    opi = np.identity(N)
     stg = nprand.rand(N)
-    ind = nprand.random_integers(0, ITER, N)
+    if MU_IND == 0:
+        ind = np.ones(N) * ITER
+    else:
+        ind = nprand.random_integers(0, ITER, N)
     ast = np.zeros(STEPS)
     arp = np.zeros(STEPS)
     ain = np.zeros(STEPS)
     for t in xrange(STEPS):
         if t % DUMP == 0:
             print 'proc %d: step %d' % (pr, t)
-        rep = pagerank(opi) * opi.sum() / (2*N)
+        rep = pagerank(opi) * opi.sum() / N
         ast[t] = stg.sum() / N
-        arp[t] = rep.sum() / (N * ITER)
+        arp[t] = rep.sum() / (N * (ITER + 1))
         ain[t] = ind.sum() / N
         fit, opi = interact(fit, opi, rep, stg, ind)
         fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
