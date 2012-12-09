@@ -11,7 +11,7 @@ from multiprocessing import Process, Queue
 SEL = 1
 # max pagerank-iterations
 ITER = 10
-# pagerank teleportation rate
+# pagerank non-teleportation rate
 ALPHA = 0.85
 # interaction cost
 C = .1
@@ -19,21 +19,21 @@ C = .1
 B = .2
 # number of interactions per round
 MEETS = 100
-# mutation for strategy
+# mutation probability for strategy
 MU_STG = .001
-# mutation for pagerank-iterations
+# mutation probability for pagerank-iterations
 MU_IND = .001
 # population size
 N = 100
 # number of rounds
-STEPS = 5000
+STEPS = 50000
 # how often to print progress
-DUMP = 1000
+DUMP = 10
 # number of threads
 PROC = 4
 # reset everyone's opinions of offspring
 DIE_RESET = False
-#Error rate in actions
+# error rate in actions
 ERR = 0
 
 def wrand(weight):
