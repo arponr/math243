@@ -1,17 +1,18 @@
 # = done
 
 Analysis:
-#   less iterations for PageRank
-#   Different restrictions for different individuals, linear cost for more iterations
+    less iterations for PageRank#
+    Different restrictions for different individuals, linear cost for more iterations#
 Knowledge:
     Only know some of the interactions, linear cost for knowing more
     Only know an induced subgraph of interactions, quadratic cost for larger subgraph
 Reproduction:
-#   Reset reputation
+    Reset reputation#
     mutation rate/what to mutate
     mutate by reset with some chance or by adding a random amount
 Strategy:
-#   probability of errors
+    probability of errors#
     most general--function from reputation to probability
 Selection:
-#   Make weak
+    Make weak#
+    Round Robin vs not#
