@@ -14,7 +14,7 @@ ALPHA = 0.85
 # interaction cost
 C = 1
 # interaction benefit
-B = 10
+B = 2
 # number of interactions per round
 MEETS = 500
 # mutation probability for strategy
@@ -39,6 +39,10 @@ ERR = 0
 ROBIN = False
 # true: remember the past (with discounting); false: don't
 MEMORY = False
+# subtracted from thresholds
+STG_DELTA = 0
+# multiply strategy by this
+STG_MULT = 1.
 
 def wrand(weight):
     a = random.random() * weight.sum()
@@ -49,7 +53,7 @@ def wrand(weight):
             return i
 
 def normalise(A):
-    return A / A.sum(0)
+    return A / np.maximum(A.sum(0), 1)
 
 def pagerank(A):
     B = normalise(A)
@@ -62,8 +66,8 @@ def pagerank(A):
 def interact(fit, opi, rep, stg, ind):
     def interact_one(don, rec):
         new = 0
-        if (rep[ind[don]][rec] > stg[don] and random.random() > ERR or
-            rep[ind[don]][rec] < stg[don] and random.random() < ERR):
+        if ((rep[ind[don]][rec] > stg[don] and random.random() > ERR) or
+            (rep[ind[don]][rec] < stg[don] and random.random() < ERR)):
             new = 1
             fit[don] -= C * SEL
             fit[rec] += B * SEL
@@ -88,7 +92,7 @@ def evolve(fit, opi, rep, stg, ind):
     die = random.randrange(N)
     fit[die], rep[:,die] = fit[pro], rep[:,pro]
     if random.random() < MU_STG:
-        stg[die] = random.random()
+        stg[die] = random.random() * STG_MULT - STG_DELTA
     else:
         stg[die] = stg[pro]
     if random.random() < MU_IND:
@@ -107,8 +111,8 @@ def evolve(fit, opi, rep, stg, ind):
 
 def run_on_proc(q, pr):
     fit = np.ones(N)
-    opi = np.identity(N)
-    stg = nprand.rand(N)
+    opi = np.zeros((N,N))
+    stg = nprand.rand(N) * STG_MULT - STG_DELTA
     if MU_IND == 0:
         ind = np.ones(N) * ITER
     else:
@@ -119,7 +123,6 @@ def run_on_proc(q, pr):
     aft = np.zeros(STEPS)
     for t in xrange(STEPS):
         if t % DUMP == 0:
-            #print 'proc %d: step %d' % (pr, t)
             q.put((pr, 'step', t))
         rep = pagerank(opi) * opi.sum() / N
         ast[t] = np.mean(stg)

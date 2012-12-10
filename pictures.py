@@ -6,9 +6,11 @@ from math import *
 if __name__ == "__main__":
     outname = sys.argv[1]
     fnames = sys.argv[2:]
+    if len(fnames) == 0:
+        fnames = [outname]
     results = {}
     for fname in fnames:
-        with open(fname) as f:
+        with open(fname + '.out') as f:
             obj = cPickle.load(f)
             for (k, v) in obj.iteritems():
                 if not k in results:
@@ -21,8 +23,8 @@ if __name__ == "__main__":
         plt.subplot(w,h,i)
         plt.plot(results['ast'][i], label='avg. coop threshold')
         plt.plot(results['arp'][i], label='avg. reputation')
-        plt.plot(results['aft'][i], label='avg. fitness')
+        #plt.plot(results['aft'][i], label='avg. fitness')
         plt.legend()
-    plt.savefig(outname,dpi=300)
+    plt.savefig(outname + '.png',dpi=300)
     plt.show()
 
