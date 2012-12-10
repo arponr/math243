@@ -1,10 +1,8 @@
 from __future__ import division
 import numpy as np
 import numpy.random as nprand
-import pylab
-import random
-import sys
-import cPickle
+import random, sys, os, cPickle
+from math import *
 from multiprocessing import Process, Queue
 
 # selection strength
@@ -16,7 +14,7 @@ ALPHA = 0.85
 # interaction cost
 C = 1
 # interaction benefit
-B = 1.1
+B = 10
 # number of interactions per round
 MEETS = 500
 # mutation probability for strategy
@@ -26,9 +24,11 @@ MU_IND = 0 #MU_IND = .0001
 # population size
 N = 100
 # number of rounds
-STEPS = 10000
+STEPS = 5000
+# console width
+WIDTH = 50
 # how often to print progress
-DUMP = 10
+DUMP = STEPS/WIDTH
 # number of threads
 PROC = 1
 # reset everyone's opinions of offspring
@@ -49,15 +49,14 @@ def wrand(weight):
             return i
 
 def normalise(A):
-    return A / A.sum(1)
+    return A / A.sum(0)
 
 def pagerank(A):
     B = normalise(A)
-    unif = np.ones(len(B)) / len(B)
     x = np.zeros((ITER+1, len(B)))
-    x[0] = unif.copy()
+    x[0] = 1 / len(B)
     for i in xrange(ITER):
-        x[i+1] = ALPHA * np.dot(B, x[i]) + (1 - ALPHA) * unif
+        x[i+1] = ALPHA * np.dot(B, x[i]) + (1 - ALPHA) / len(B)
     return x
 
 def interact(fit, opi, rep, stg, ind):
@@ -117,33 +116,54 @@ def run_on_proc(q, pr):
     ast = np.zeros(STEPS)
     arp = np.zeros(STEPS)
     ain = np.zeros(STEPS)
+    aft = np.zeros(STEPS)
     for t in xrange(STEPS):
         if t % DUMP == 0:
-            print 'proc %d: step %d' % (pr, t)
+            #print 'proc %d: step %d' % (pr, t)
+            q.put((pr, 'step', t))
         rep = pagerank(opi) * opi.sum() / N
-        ast[t] = stg.sum() / N
+        ast[t] = np.mean(stg)
         if MU_IND == 0:
-            arp[t] = rep[ITER].sum() / N
+            arp[t] = np.mean(rep[ITER])
         else:
-            arp[t] = rep.sum() / (N * (ITER + 1))
-        ain[t] = ind.sum() / N
+            arp[t] = np.mean(rep)
+        ain[t] = np.mean(ind)
+        aft[t] = np.mean(fit)
         fit, opi = interact(fit, opi, rep, stg, ind)
         fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
-    q.put({'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 
-           'ast':ast, 'arp':arp, 'ain':ain})
+    q.put((pr, 'return', {'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 
+           'ast':ast, 'arp':arp, 'ain':ain, 'aft':aft}))
 
 def run():
     q = Queue()
-    for i in xrange(PROC):
-        proc = Process(target=run_on_proc, args=(q,i))
-        proc.start()
+    if PROC > 1:
+        for i in xrange(PROC):
+            proc = Process(target=run_on_proc, args=(q,i))
+            proc.start()
+    else:
+        run_on_proc(q, 0)
     arrs = {}
-    for i in xrange(PROC):
-        rets = q.get()
-        for (k, ret) in rets.iteritems():
-            if not k in arrs:
-                arrs[k] = []
-            arrs[k].append(ret)
+    steps = np.zeros(PROC)
+    returns = 0
+    wipe = ''
+    faces = '])|([P\</O'
+    f = 0
+    while returns < PROC:
+        pr, act, ret = q.get()
+        if act == 'return':
+            for (k, arr) in ret.iteritems():
+                if not k in arrs:
+                    arrs[k] = []
+                arrs[k].append(arr)
+            returns += 1
+        elif act == 'step':
+            steps[pr] = ret
+            f = (f + 1) % len(faces)
+            prog = '.' * int(floor(steps.sum() / (PROC*STEPS) * WIDTH)) + ' :' + faces[f]
+            sys.stdout.write(wipe)
+            sys.stdout.write(prog)
+            wipe = "\b" * len(prog)
+            sys.stdout.flush()
     return arrs
 
 if __name__ == "__main__":
