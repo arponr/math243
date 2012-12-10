@@ -1,6 +1,7 @@
 from __future__ import division
 import numpy as np
 import numpy.random as nprand
+import scipy.weave as weave
 import random, sys, os, cPickle
 from math import *
 from multiprocessing import Process, Queue
@@ -34,11 +35,11 @@ PROC = 1
 # reset everyone's opinions of offspring
 DIE_RESET = False
 # error rate in actions
-ERR = 0
+ERR = 0.
 # true: interact round-robin; false: interact randomly
 ROBIN = False
 # true: remember the past (with discounting); false: don't
-MEMORY = False
+MEMORY = 0
 # subtracted from thresholds
 STG_DELTA = 0
 # multiply strategy by this
@@ -63,30 +64,50 @@ def pagerank(A):
         x[i+1] = ALPHA * np.dot(B, x[i]) + (1 - ALPHA) / len(B)
     return x
 
+robin_dons = np.array(range(N)*(N-1))
+robin_recs = np.array(range(N-1)*N)
 def interact(fit, opi, rep, stg, ind):
-    def interact_one(don, rec):
-        new = 0
-        if ((rep[ind[don]][rec] > stg[don] and random.random() > ERR) or
-            (rep[ind[don]][rec] < stg[don] and random.random() < ERR)):
-            new = 1
-            fit[don] -= C * SEL
-            fit[rec] += B * SEL
-        if MEMORY:
-            opi[don][rec] = (opi[don][rec] + new/2) / 2
-        else:
-            opi[don][rec] = new
+    m = MEETS
     if ROBIN:
-        for don in xrange(N):
-            for rec in xrange(N):
-                if don == rec:
-                    continue
-                interact_one(don, rec)
+        m = N * (N-1)
+        dons = robin_dons
+        recs = robin_recs
     else:
-        for t in xrange(MEETS):
-            don, rec = random.sample(xrange(N), 2)
-            interact_one(don, rec)
+        dons = nprand.random_integers(0, N-1, m)
+        recs = nprand.random_integers(0, N-2, m)
+    if ERR > 0:
+        rands = nprand.rand(m)
+    else:
+        rands = np.ones(m)
+    code = r'''
+#line 84 "reput.c"
+int don, rec;
+double newval;
+for (int t = 0; t < m; t++) {
+    don = dons(t);
+    rec = recs(t);
+    if (rec >= don) {
+        rec += 1;
+    }
+    newval = 0;
+    if ((rep((int) ind(don),rec) > stg(don) && rands(t) > ERR) || rands(t) < ERR) {
+        newval = 1;
+        fit(don) -= C * SEL;
+        fit(rec) += B * SEL;
+    }
+    if (MEMORY) {
+        opi(don, rec) = (opi(don, rec) + newval/2) / 2;
+    }
+    else {
+        opi(don, rec) = newval;
+    }
+}
+'''
+    weave.inline(code, ['m', 'dons', 'recs', 'MEMORY', 'ERR', 'rands',
+                        'stg', 'fit', 'opi', 'B', 'C', 'SEL', 'rep', 'ind'],
+                 type_converters=weave.converters.blitz)
     return fit, opi
-
+    
 def evolve(fit, opi, rep, stg, ind):
     pro = wrand(fit)
     die = random.randrange(N)
@@ -99,11 +120,9 @@ def evolve(fit, opi, rep, stg, ind):
         ind[die] = random.randrange(ITER+1)
     else:
         ind[die] = ind[pro]
-    opi[die] = opi[pro]
-    opi[:,die] = opi[:,pro]
     if DIE_RESET:
-        opi[die] = 1
-        opi[:,die] = 1
+        opi[die] = 0
+        opi[:,die] = 0
     else:
         opi[die] = opi[pro]
         opi[:, die] = opi[:, pro]
@@ -111,10 +130,10 @@ def evolve(fit, opi, rep, stg, ind):
 
 def run_on_proc(q, pr):
     fit = np.ones(N)
-    opi = np.zeros((N,N))
+    opi = np.zeros((N,N), float)
     stg = nprand.rand(N) * STG_MULT - STG_DELTA
     if MU_IND == 0:
-        ind = np.ones(N) * ITER
+        ind = np.ones(N, int) * ITER
     else:
         ind = nprand.random_integers(0, ITER, N)
     ast = np.zeros(STEPS)
@@ -124,7 +143,7 @@ def run_on_proc(q, pr):
     for t in xrange(STEPS):
         if t % DUMP == 0:
             q.put((pr, 'step', t))
-        rep = pagerank(opi) * opi.sum() / N
+        rep = pagerank(opi) * opi.sum() / (N-1)
         ast[t] = np.mean(stg)
         if MU_IND == 0:
             arp[t] = np.mean(rep[ITER])
