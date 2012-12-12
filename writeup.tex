@@ -1,0 +1,33 @@
+\documentclass{amsart}
+\title{Simulating Evolutionary Reputation using PageRank}
+\author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
+\date{\today}
+
+\begin{document}
+
+\begin{abstract}
+A key question in the study of evolutionary dynamics has been how indirect reciprocity might emerge: that is, how individuals might evolve a tendency to accept a personal fitness cost in exchange for a greater benefit to another individual, without the understanding that the recipient will later repay them. One proposed mechanism for this to occur is that donating to others enhances one's reputation, making third parties more likely to donate to the donator. We develop a novel model for determining reputation, adapted from the PageRank Web search algorithm, that allows individuals to differentiate between refusal to donate because the donor is selfish, and refusing to donate because the recipient is selfish. Thus donors will be penalized less for being paired against a number of selfish individuals. Using this model, we find that cooperation can emerge with much smaller benefit/cost ratios than previously observed.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+\section{Related Work}
+
+Previously, Nowak and Sigmund have modeled indirect reciprocity with a concept of ``image'' \cite{nowak_evolution_1998}. Each individual in the simulation is given an image score. During each round of a stochastic simulation, individuals play a number of single-round donor-receiver games with other members of the population and have the opportunity to be either altruistic or selfish; the former increases the image score and the latter decreases it. Individuals’ strategies are to donate if the recipient’s image score is above some threshold, but keep the reward otherwise.
+
+Under these circumstances, Nowak and Sigmund found that in the simplest model, without mutation, whether cooperation evolves is determined by the initial fraction of defectors. Adding mutation causes the population to cycle between discriminating cooperation, unconditional cooperation, and defection in all cases. Limiting the number of interactions known by each player makes it difficult to establish cooperation in large populations. Finally, if players are conscious of their own reputation and act to increase it when it is low, cooperation evolves much more easily. 
+
+This model is simple and elegant, but it has a few drawbacks. For instance, it discretizes reputation, which may lead to strange edge effects. Furthermore, it penalizes equally an individual who defects because they are playing against a low-reputation opponent, and one who defects for selfish reasons. Finally, a model based on per-pair reputation allows for later considering strategies that involve lying about reputation, allowing us to potentially simulate more complex social dynamics.
+
+\section{Our model}
+
+\section{Results}
+
+\section{Conclusion}
+
+\bibliographystyle{plain}
+\bibliography{refs}
+
+\end{document}
