@@ -68,6 +68,8 @@ def pagerank(A):
         x[i+1] = ALPHA * np.dot(B, x[i]) + (1 - ALPHA) / len(B)
     return x
 
+def strategy_from(rand):
+    return rand /(1 - PERC - PERD) - PERC/(1 - PERC - PERD)
 robin_dons = np.array(range(N)*(N-1))
 robin_recs = np.array(range(N-1)*N)
 def interact(fit, opi, rep, stg, ind):
@@ -121,7 +123,7 @@ def evolve(fit, opi, rep, stg, ind):
     die = random.randrange(N)
     fit[die], rep[:,die] = fit[pro], rep[:,pro]
     if random.random() < MU_STG:
-        stg[die] = random.random() /(1 - PERC - PERD) - PERC/(1 - PERC - PERD)
+        stg[die] = strategy_from(random.random())
     else:
         stg[die] = stg[pro]
     if random.random() < MU_IND:
@@ -140,7 +142,7 @@ def run_on_proc(q, pr):
     for i in xrange(SIM):
         fit = np.ones(N)
         opi = np.zeros((N,N), float)
-        stg = nprand.rand(N) /(1 - PERC - PERD) - PERC/(1 - PERC - PERD)
+        stg = strategy_from(nprand.rand(N))
         if MU_IND == 0:
             ind = np.ones(N, int) * ITER
         else:
