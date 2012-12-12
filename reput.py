@@ -152,28 +152,45 @@ def run_on_proc(q, pr):
         arp = np.zeros(STEPS)
         ain = np.zeros(STEPS)
         aft = np.zeros(STEPS)
+        pst = np.zeros((STEPS,N))
+        prp = np.zeros((STEPS,N))
+        pin = np.zeros((STEPS,N))
+        pft = np.zeros((STEPS,N))
         for t in xrange(STEPS):
             if t % DUMP == 0:
                 q.put((pr, 'step', t + i*STEPS))
             rep = pagerank(opi) * opi.sum() / (N-1)
             ast[t] = np.mean(stg)
+            pst[t] = stg.copy()
             if MU_IND == 0:
                 arp[t] = np.mean(rep[ITER])
+                prp[t] = rep[ITER].copy()
             else:
                 arp[t] = np.mean(rep)
+                # prp not defined in this case yet
             ain[t] = np.mean(ind)
+            pin[t] = ind.copy()
             fit, opi = interact(fit, opi, rep, stg, ind)
             fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
             aft[t] = np.mean(fit)
+            pft[t] = fit.copy()
             fit = np.ones(N)
-        q.put((pr, 'return', {'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 
-               'ast':ast, 'arp':arp, 'ain':ain, 'aft':aft}))
+        q.put((pr, 'return', {'fit':fit, 'stg':stg, 'ind':ind,
+                              'rep':rep, 'ast':ast, 'arp':arp,
+                              'ain':ain, 'aft':aft, 'pst':pst,
+                              'prp':prp, 'pin':pin, 'pft':pft})) 
+        
+def avg_trials(arrs):
+    avgs = {}
+    for k, arr in arrs.iteritems():
+        avgs['avg_'+k] = np.mean(np.array(arr), 0)
+    return avgs
 
 def run():
     q = Queue()
     if PROC > 1:
         for i in xrange(PROC):
-            proc = Process(target=run_on_proc, args=(q,i))
+            proc = Process(target=run_on_proc, args=(q, i))
             proc.start()
     else:
         run_on_proc(q, 0)    
@@ -199,6 +216,7 @@ def run():
             sys.stdout.write(prog)
             wipe = "\b" * len(prog)
             sys.stdout.flush()
+    #arrs.update(avg_trials(arrs))
     return arrs
 
 if __name__ == "__main__":
@@ -215,6 +233,7 @@ if __name__ == "__main__":
     if not fname.endswith('.out'):
         fname = fname + '.out'
     result = run()
+    avgs = avg_trials(result)
     with open(fname, 'w') as out:
         cPickle.dump(result, out)
     print

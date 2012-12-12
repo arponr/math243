@@ -19,6 +19,7 @@ if __name__ == "__main__":
     n = len(results['ast'])
     w = int(ceil(sqrt(n)))
     h = int(ceil(n/w))
+    plt.figure()
     for i in xrange(n):
         plt.subplot(w,h,i)
         plt.plot(results['ast'][i], label='avg. coop threshold')
