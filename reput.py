@@ -15,7 +15,7 @@ ALPHA = 0.85
 # interaction cost
 C = 1
 # interaction benefit
-B = 2
+B = 10
 # number of interactions per round
 MEETS = 500
 # mutation probability for strategy
@@ -25,17 +25,21 @@ MU_IND = 0 #MU_IND = .0001
 # population size
 N = 100
 # number of rounds
-STEPS = 5000
+STEPS = 10000
 # console width
 WIDTH = 50
 # how often to print progress
 DUMP = STEPS/WIDTH
 # number of threads
-PROC = 1
+PROC = 4
+#number of simulations per thread
+SIM = 4
 # reset everyone's opinions of offspring
 DIE_RESET = False
 # error rate in actions
 ERR = 0.
+# chance for an action to be heard about
+GOS = 1.
 # true: interact round-robin; false: interact randomly
 ROBIN = False
 # true: remember the past (with discounting); false: don't
@@ -79,6 +83,10 @@ def interact(fit, opi, rep, stg, ind):
         rands = nprand.rand(m)
     else:
         rands = np.ones(m)
+    if GOS < 1:
+        sands = nprand.rand(m)
+    else:
+        sands = np.zeros(m)
     code = r'''
 #line 84 "reput.c"
 int don, rec;
@@ -91,7 +99,7 @@ for (int t = 0; t < m; t++) {
     }
     newval = 0;
     if ((rep((int) ind(don),rec) > stg(don) && rands(t) > ERR) || rands(t) < ERR) {
-        newval = 1;
+        newval = (sands(t) < GOS) ? 1 : 0;
         fit(don) -= C * SEL;
         fit(rec) += B * SEL;
     }
@@ -103,8 +111,8 @@ for (int t = 0; t < m; t++) {
     }
 }
 '''
-    weave.inline(code, ['m', 'dons', 'recs', 'MEMORY', 'ERR', 'rands',
-                        'stg', 'fit', 'opi', 'B', 'C', 'SEL', 'rep', 'ind'],
+    weave.inline(code, ['m', 'dons', 'recs', 'MEMORY', 'ERR', 'rands', 'sands',
+                        'stg', 'fit', 'opi', 'B', 'C', 'SEL', 'GOS', 'rep', 'ind'],
                  type_converters=weave.converters.blitz)
     return fit, opi
     
@@ -129,32 +137,34 @@ def evolve(fit, opi, rep, stg, ind):
     return fit, opi, rep, stg
 
 def run_on_proc(q, pr):
-    fit = np.ones(N)
-    opi = np.zeros((N,N), float)
-    stg = nprand.rand(N) * STG_MULT - STG_DELTA
-    if MU_IND == 0:
-        ind = np.ones(N, int) * ITER
-    else:
-        ind = nprand.random_integers(0, ITER, N)
-    ast = np.zeros(STEPS)
-    arp = np.zeros(STEPS)
-    ain = np.zeros(STEPS)
-    aft = np.zeros(STEPS)
-    for t in xrange(STEPS):
-        if t % DUMP == 0:
-            q.put((pr, 'step', t))
-        rep = pagerank(opi) * opi.sum() / (N-1)
-        ast[t] = np.mean(stg)
+    for i in xrange(SIM):
+        fit = np.ones(N)
+        opi = np.zeros((N,N), float)
+        stg = nprand.rand(N) * STG_MULT - STG_DELTA
         if MU_IND == 0:
-            arp[t] = np.mean(rep[ITER])
+            ind = np.ones(N, int) * ITER
         else:
-            arp[t] = np.mean(rep)
-        ain[t] = np.mean(ind)
-        aft[t] = np.mean(fit)
-        fit, opi = interact(fit, opi, rep, stg, ind)
-        fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
-    q.put((pr, 'return', {'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 
-           'ast':ast, 'arp':arp, 'ain':ain, 'aft':aft}))
+            ind = nprand.random_integers(0, ITER, N)
+        ast = np.zeros(STEPS)
+        arp = np.zeros(STEPS)
+        ain = np.zeros(STEPS)
+        aft = np.zeros(STEPS)
+        for t in xrange(STEPS):
+            if t % DUMP == 0:
+                q.put((pr, 'step', t + i*STEPS))
+            rep = pagerank(opi) * opi.sum() / (N-1)
+            ast[t] = np.mean(stg)
+            if MU_IND == 0:
+                arp[t] = np.mean(rep[ITER])
+            else:
+                arp[t] = np.mean(rep)
+            ain[t] = np.mean(ind)
+            aft[t] = np.mean(fit)
+            fit, opi = interact(fit, opi, rep, stg, ind)
+            fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
+            fit = np.ones(N)
+        q.put((pr, 'return', {'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 
+               'ast':ast, 'arp':arp, 'ain':ain, 'aft':aft}))
 
 def run():
     q = Queue()
@@ -163,14 +173,14 @@ def run():
             proc = Process(target=run_on_proc, args=(q,i))
             proc.start()
     else:
-        run_on_proc(q, 0)
+        run_on_proc(q, 0)    
     arrs = {}
-    steps = np.zeros(PROC)
+    steps = np.zeros(PROC*SIM)
     returns = 0
     wipe = ''
     faces = '])|([P\</O'
     f = 0
-    while returns < PROC:
+    while returns < PROC*SIM:
         pr, act, ret = q.get()
         if act == 'return':
             for (k, arr) in ret.iteritems():
@@ -181,7 +191,7 @@ def run():
         elif act == 'step':
             steps[pr] = ret
             f = (f + 1) % len(faces)
-            prog = '.' * int(floor(steps.sum() / (PROC*STEPS) * WIDTH)) + ' :' + faces[f]
+            prog = '.' * int(floor(steps.sum() / (PROC*SIM*STEPS) * WIDTH)) + ' :' + faces[f]
             sys.stdout.write(wipe)
             sys.stdout.write(prog)
             wipe = "\b" * len(prog)
@@ -204,3 +214,4 @@ if __name__ == "__main__":
     result = run()
     with open(fname, 'w') as out:
         cPickle.dump(result, out)
+    print
