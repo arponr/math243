@@ -15,7 +15,7 @@ ALPHA = 0.85
 # interaction cost
 C = 1
 # interaction benefit
-B = 10
+B = 2
 # number of interactions per round
 MEETS = 500
 # mutation probability for strategy
@@ -44,10 +44,10 @@ GOS = 1.
 ROBIN = False
 # true: remember the past (with discounting); false: don't
 MEMORY = 0
-# subtracted from thresholds
-STG_DELTA = 0
-# multiply strategy by this
-STG_MULT = 1.
+# chance of unconditional cooperators
+PERC = .05
+# chance of unconditional defectors
+PERD = .05
 
 def wrand(weight):
     a = random.random() * weight.sum()
@@ -121,7 +121,7 @@ def evolve(fit, opi, rep, stg, ind):
     die = random.randrange(N)
     fit[die], rep[:,die] = fit[pro], rep[:,pro]
     if random.random() < MU_STG:
-        stg[die] = random.random() * STG_MULT - STG_DELTA
+        stg[die] = random.random() /(1 - PERC - PERD) - PERC/(1 - PERC - PERD)
     else:
         stg[die] = stg[pro]
     if random.random() < MU_IND:
@@ -140,7 +140,7 @@ def run_on_proc(q, pr):
     for i in xrange(SIM):
         fit = np.ones(N)
         opi = np.zeros((N,N), float)
-        stg = nprand.rand(N) * STG_MULT - STG_DELTA
+        stg = nprand.rand(N) /(1 - PERC - PERD) - PERC/(1 - PERC - PERD)
         if MU_IND == 0:
             ind = np.ones(N, int) * ITER
         else:

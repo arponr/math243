@@ -24,7 +24,7 @@ if __name__ == "__main__":
         plt.plot(results['ast'][i], label='avg. coop threshold')
         plt.plot(results['arp'][i], label='avg. reputation')
         #plt.plot(results['aft'][i], label='avg. fitness')
-        plt.legend()
+        plt.legend(prop={'size':3})
     plt.savefig(outname + '.png',dpi=300)
     plt.show()
 
