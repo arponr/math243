@@ -121,7 +121,7 @@ We compute PageRank using the iterated multiplication method; that is, let $u$ b
 We make one modification to the PageRank algorithm. Because $r$ is normalized to the sum of the entries being $1$, this algorithm does not discriminate between the entire population cooperating and the entire population defecting. Therefore, we normalize to the sum being the average number of cooperations per player.
 
 \subsection{Interaction protocol}
-$I$ times, and ordered pair $(i,j)$ of distinct players is chosen independently of all other pairs (note that this means that in a given round, the same pair can be chosen more than once). $i$ has a choice to decrease its own fitness by $\omega$ to increase that of the $j$ by $b \omega$. It chooses according to its strategy doing so iff $s_i < r_j$. If it did, $M_{ij}$ is set to one, otherwise $M_{ij}$ is set to $0$. 
+$I$ times, an ordered pair $(i,j)$ of distinct players is chosen independently of all other pairs (note that this means that in a given round, the same pair can be chosen more than once). $i$ has a choice to decrease its own fitness by $\omega$ to increase that of the $j$ by $b \omega$. It chooses according to its strategy doing so iff $s_i < r_j$. If it did, $M_{ij}$ is set to one, otherwise $M_{ij}$ is set to $0$. 
 
 \subsection{Modifications}
 We tested a few modifications of the original model
