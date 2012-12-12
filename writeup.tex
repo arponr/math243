@@ -2,56 +2,12 @@
 \title{Simulating Evolutionary Reputation using PageRank}
 \author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
 \date{\today}
-\usepackage{enumitem, verbatim}
+\usepackage{enumitem}
 
 \newcommand{\lf}{\left}
 \newcommand{\ri}{\right}
-\newcommand{\md}{\middle}
-\newcommand{\mt}{\ri. & \lf.} 
-\newcommand{\f}{\frac} 
-\newcommand{\df}[2]{{}^{#1} \! /_{#2}} 
-\newcommand{\into}{\hookrightarrow}
-\newcommand{\onto}{\twoheadrightarrow}
-\DeclareMathOperator{\sgn}{sgn}
-\DeclareMathOperator{\sig}{sig}
-\DeclareMathOperator{\lcm}{lcm}
-\DeclareMathOperator{\pf}{pf}
-\DeclareMathOperator{\rank}{rank}
-\newcommand{\triv}{\mathrm{triv}}
-\DeclareMathOperator{\Aut}{Aut}
-\DeclareMathOperator{\Gal}{Gal}
-\DeclareMathOperator{\Ext}{Ext}
-\DeclareMathOperator{\Hom}{Hom}
-\DeclareMathOperator{\Sym}{Sym}
-\DeclareMathOperator{\vol}{vol}
-\DeclareMathOperator{\mesh}{mesh}
-\DeclareMathOperator{\ad}{ad}
-\DeclareMathOperator{\tr}{tr}
-\DeclareMathOperator{\image}{im}
-\DeclareMathOperator{\im}{Im}
-\DeclareMathOperator{\re}{Re}
-\newcommand{\id}{\mathrm{id}}
-\DeclareMathOperator{\orb}{orb}
-\DeclareMathOperator{\fix}{fix}
-\DeclareMathOperator{\stab}{stab}
-\newcommand{\herm}[1]{{\overline{#1}^\mathbf T}}
-\newcommand{\m}[1]{\mathbf{#1}}
-\newcommand{\td}[1]{\tilde{#1}}
-\newcommand{\Hlt}{\mathbb H}
-\newcommand{\C}{\mathbb C}
-\newcommand{\R}{\mathbb R}
-\newcommand{\Q}{\mathbb Q}
-\newcommand{\N}{\mathbb N}
-\newcommand{\Z}{\mathbb Z}
-\newcommand{\T}{\mathbb T}
-\newcommand{\F}{\mathbb F}
-\newcommand{\RP}{\mathbb{RP}}
-\newcommand{\CP}{\mathbb{CP}}
 \newcommand{\eps}{\epsilon}
 \newcommand{\om}{\omega}
-\newcommand{\pdif}[2]{\f{\partial #1}{\partial #2}}
-\newcommand{\dif}[2]{\f{d#1}{d#2}}
-\newcommand{\bt}{\bullet}
 
 \begin{document}
 
@@ -62,6 +18,8 @@ A key question in the study of evolutionary dynamics has been how indirect recip
 \maketitle
 
 \section{Introduction}
+
+
 
 \section{Related Work}
 
@@ -87,7 +45,10 @@ The basic model comprises a series of rounds in which a number of donor-receiver
 \item $d$ is the fraction that are unconditional defectors.
 \end{itemize}
 
-and the following variables:
+\subsection{State}
+
+Our model has the following state variables:
+
 \begin{itemize}
 \item $M \in \mathcal{M}_N(\{0,1\})$ is an $N \times N$ matrix representing the opinions each individual has of the others; $M_{ij}$ is 1 if player $i$ donated to $j$ the last time they had the chance and 0 if $i$ was selfish. Initially, $M$ is the zero matrix.
 \item $f \in [0, \infty)^N$ is a vector of fitnesses in the current round; at the end of the round, individuals reproduce with probability proportional to their fitness.
@@ -118,7 +79,7 @@ Given a matrix $M$, we compute the PageRank as follows. Let $\tM$ be the column-
 
 We compute PageRank using the iterated multiplication method; that is, let $u$ be a uniform vector, $r_0 = u$, and let $r_i = (1-\alpha)\tilde M r_{i-1} + \alpha u$. Once the difference between successive $r_i$ is small enough, the last computed vector is the PageRank.
 
-We make one modification to the PageRank algorithm. Because $r$ is normalized to the sum of the entries being $1$, this algorithm does not discriminate between the entire population cooperating and the entire population defecting. Therefore, we normalize to the sum being the average number of cooperations per player.
+We make one modification to the PageRank algorithm. Because $r$ is normalized to the sum of the entries being $1$, this algorithm does not discriminate between the entire population cooperating and the entire population defecting. Therefore, at the end we multiply $r$ by $\frac{C}{(N-1)}$ where $C$ is the sum of the opinion matrix (a measure of how cooperative the current population is). Note that the maximum of $C$ is $N(N-1)$ (if everyone is cooperating), so the maximum of $r$ is all ones.
 
 \subsection{Interaction protocol}
 $I$ times, an ordered pair $(i,j)$ of distinct players is chosen independently of all other pairs (note that this means that in a given round, the same pair can be chosen more than once). $i$ has a choice to decrease its own fitness by $\omega$ to increase that of the $j$ by $b \omega$. It chooses according to its strategy doing so iff $s_i < r_j$. If it did, $M_{ij}$ is set to one, otherwise $M_{ij}$ is set to $0$. 
@@ -140,12 +101,6 @@ When an $M_{ij}$ entry is updated a weighted average with some weight $m$ is tak
 \section{Results}
 
 \section{Conclusion}
-
-\section{Code}
-\begin{verbatim}
-[Insert Code Here]
-\end{verbatim}
-
 
 \bibliographystyle{plain}
 \bibliography{refs}
