@@ -27,7 +27,7 @@ N = 100
 # number of rounds
 STEPS = 10000
 # console width
-WIDTH = 50
+WIDTH = 80
 # how often to print progress
 DUMP = STEPS/WIDTH
 # number of threads
@@ -191,7 +191,7 @@ def run():
         elif act == 'step':
             steps[pr] = ret
             f = (f + 1) % len(faces)
-            prog = '.' * int(floor(steps.sum() / (PROC*SIM*STEPS) * WIDTH)) + ' :' + faces[f]
+            prog = '.' * int(floor(steps.sum() / (PROC*SIM*STEPS) * (WIDTH-3))) + ' :' + faces[f]
             sys.stdout.write(wipe)
             sys.stdout.write(prog)
             wipe = "\b" * len(prog)
