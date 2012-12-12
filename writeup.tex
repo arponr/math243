@@ -75,20 +75,28 @@ This model is simple and elegant, but it has a few drawbacks. For instance, it d
 
 \subsection{Parameters}
 
-Our model comprises a series of rounds in which a number of donor-receiver games are played. We use the following parameters and variables:
+The basic model comprises a series of rounds in which a number of donor-receiver games are played. We use the following parameters:
 
 \begin{itemize}
 \item $N \in \mathbb{N}$ is the size of the population to be tested.
-\item $M \in \mathcal{M}_N(\{0,1\})$ is an $N \times N$ matrix representing the opinions each individual has of the others; $M_{ij}$ is 1 if player $i$ donated to $j$ the last time they had the chance and 0 if $i$ was selfish. Initially, $M$ is the zero matrix.
 \item $I$ is the number of donor-receiver interactions per round.
 \item $b$ is the benefit-cost ratio (fitness benefit to recipient over cost to donor).
 \item $\omega$ is the selection coefficient (magnitude of cost to donor).
+\item $\mu$ is the strategy mutation probability
+\item $c$ is the fraction of players that are unconditional cooperators
+\item $d$ is the fraction that are unconditional defectors.
+\end{itemize}
+
+and the following variables:
+\begin{itemize}
+\item $M \in \mathcal{M}_N(\{0,1\})$ is an $N \times N$ matrix representing the opinions each individual has of the others; $M_{ij}$ is 1 if player $i$ donated to $j$ the last time they had the chance and 0 if $i$ was selfish. Initially, $M$ is the zero matrix.
 \item $f \in [0, \infty)^N$ is a vector of fitnesses in the current round; at the end of the round, individuals reproduce with probability proportional to their fitness.
 \item $r \in [0,1]^N$ is a vector of reputations of individuals.
 \item $s \in [0,1]^N$ is a vector of strategies; if $s_i = x$, then player $i$ will donate to any players with $r_i \ge x$ and keep the reward against other players.
 \end{itemize}
 
 \subsection{Round protocol}
+The simulation is initialized by giving each player a random strategy: unconditional cooperation with probability $c$, unconditional defection with probability $d$, and a uniform $s \in [0,1]$ with probability $1 - c- d$. $M$ is originally set to be $0$. 
 
 Each round comprises the following steps:
 
@@ -98,7 +106,8 @@ Each round comprises the following steps:
 \item Determine the results of $I$ interactions (see below).
 \item Set entries of $f$ according to the results of the interactions.
 \item Set entries of $M$ according to the results of the interactions.
-\item Choose a player to die at random and one to reproduce proportional to fitness. Replace the dead player with a copy of the reproducing one (It inherits $M$ entries).
+\item Choose a player to die at random and one to reproduce proportional to fitness. Replace the dead player with a copy of the reproducing one (It inherits the appropriate row and column of $M$ entries). 
+\item With probability $\mu$, the strategy of the new player resets randomly as in the initialization phase.
 \end{enumerate}
 
 \subsection{PageRank}
@@ -112,9 +121,20 @@ We compute PageRank using the iterated multiplication method; that is, let $u$ b
 We make one modification to the PageRank algorithm. Because $r$ is normalized to the sum of the entries being $1$, this algorithm does not discriminate between the entire population cooperating and the entire population defecting. Therefore, we normalize to the sum being the average number of cooperations per player.
 
 \subsection{Interaction protocol}
-$I$ times two separate players $i,j$ are chosen independently of all other choices (note that this means that in a given round, the same pair can be chosen more than once). $i$ has a choice to decrease its own fitness by $\omega$ to increase that of the $j$ by $b \omega$. It chooses according to its strategy doing so iff $s_i < r_j$. If it did, $M_{ij}$ is set to one, otherwise $M_{ij}$ is set to $0$. 
+$I$ times, and ordered pair $(i,j)$ of distinct players is chosen independently of all other pairs (note that this means that in a given round, the same pair can be chosen more than once). $i$ has a choice to decrease its own fitness by $\omega$ to increase that of the $j$ by $b \omega$. It chooses according to its strategy doing so iff $s_i < r_j$. If it did, $M_{ij}$ is set to one, otherwise $M_{ij}$ is set to $0$. 
 
-There were two modifications we made to this protocol in some tests. First there was a probability $\alpha$ that $i$ would do the opposite of what it wanted to. Second, there was a probability $\beta$ that even if $i$ donated to $j$, $M_{ij}$ may not have been set to $0$. 
+There were two modifications we made to this protocol in some tests. First there was a probability $\alpha$ that $i$ would do the opposite of what it wanted to. Second, there was a probability $\beta$ that even if $i$ donated to $j$, $M_{ij}$ may not have been updated. 
+
+\subsection{Modifications}
+We tested a few modifications of the original model
+\begin{enumerate}
+\item
+There is a small probability $\alpha$ that a player does the opposite of what it wants to in an interaction
+\item
+There is a small probability $\beta$ that after a donation, the corresponding entry of $M$ is not updated.
+\item
+Each player computes a different number of steps $n_i$ of the PageRank iterated multiplication representing different capacities for analysis of social situations. For example, someone who just does $1$ step would measure reputation as the total number of donations a player gave replicating Nowak and Sigmund's original model. The $n_i$ are initialized randomly, are inherited, and mutate with some probability $\mu_n$. There is a fitness cost $p n_i$ to each player $i$. 
+\end{enumerate}
 
 \section{Results}
 
