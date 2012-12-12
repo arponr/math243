@@ -12,7 +12,20 @@
 \begin{document}
 
 \begin{abstract}
-A key question in the study of evolutionary dynamics has been how indirect reciprocity might emerge: that is, how individuals might evolve a tendency to accept a personal fitness cost in exchange for a greater benefit to another individual, without the understanding that the recipient will later repay them. One proposed mechanism for this to occur is that donating to others enhances one's reputation, making third parties more likely to donate to the donator. We develop a novel model for determining reputation, adapted from the PageRank Web search algorithm, that allows individuals to differentiate between refusal to donate because the donor is selfish, and refusing to donate because the recipient is selfish. Thus donors will be penalized less for being paired against a number of selfish individuals. Using this model, we find that cooperation can emerge with much smaller benefit/cost ratios than previously observed.
+A key question in the study of evolutionary dynamics has been how
+indirect reciprocity might emerge: that is, how individuals might
+evolve a tendency to accept a personal fitness cost in exchange for a
+greater benefit to another individual, without the understanding that
+the recipient will later repay them. One proposed mechanism for this
+to occur is that donating to others enhances one's reputation, making
+third parties more likely to donate to the donator. We develop a novel
+model for determining reputation, adapted from the PageRank Web search
+algorithm, that allows individuals to differentiate between refusal to
+donate because the donor is selfish, and refusing to donate because
+the recipient is selfish. Thus donors will be penalized less for being
+paired against a number of selfish individuals. Using this model, we
+find that cooperation can emerge with much smaller benefit/cost ratios
+than previously observed.
 \end{abstract}
 
 \maketitle
@@ -23,25 +36,52 @@ A key question in the study of evolutionary dynamics has been how indirect recip
 
 \section{Related Work}
 
-Previously, Nowak and Sigmund have modeled indirect reciprocity with a concept of ``image'' \cite{nowak_evolution_1998}. Each individual in the simulation is given an image score. During each round of a stochastic simulation, individuals play a number of single-round donor-receiver games with other members of the population and have the opportunity to be either altruistic or selfish; the former increases the image score and the latter decreases it. Individuals’ strategies are to donate if the recipient’s image score is above some threshold, but keep the reward otherwise.
+Previously, Nowak and Sigmund have modeled indirect reciprocity with a
+concept of ``image'' \cite{nowak_evolution_1998}. Each individual in
+the simulation is given an image score. During each round of a
+stochastic simulation, individuals play a number of single-round
+donor-receiver games with other members of the population and have the
+opportunity to be either altruistic or selfish; the former increases
+the image score and the latter decreases it. Individuals’ strategies
+are to donate if the recipient’s image score is above some threshold,
+but keep the reward otherwise.
 
-Under these circumstances, Nowak and Sigmund found that in the simplest model, without mutation, whether cooperation evolves is determined by the initial fraction of defectors. Adding mutation causes the population to cycle between discriminating cooperation, unconditional cooperation, and defection in all cases. Limiting the number of interactions known by each player makes it difficult to establish cooperation in large populations. Finally, if players are conscious of their own reputation and act to increase it when it is low, cooperation evolves much more easily. 
+Under these circumstances, Nowak and Sigmund found that in the
+simplest model, without mutation, whether cooperation evolves is
+determined by the initial fraction of defectors. Adding mutation
+causes the population to cycle between discriminating cooperation,
+unconditional cooperation, and defection in all cases. Limiting the
+number of interactions known by each player makes it difficult to
+establish cooperation in large populations. Finally, if players are
+conscious of their own reputation and act to increase it when it is
+low, cooperation evolves much more easily.
 
-This model is simple and elegant, but it has a few drawbacks. For instance, it discretizes reputation, which may lead to strange edge effects. Furthermore, it penalizes equally an individual who defects because they are playing against a low-reputation opponent, and one who defects for selfish reasons. Finally, a model based on per-pair reputation allows for later considering strategies that involve lying about reputation, allowing us to potentially simulate more complex social dynamics.
+This model is simple and elegant, but it has a few drawbacks. For
+instance, it discretizes reputation, which may lead to strange edge
+effects. Furthermore, it penalizes equally an individual who defects
+because they are playing against a low-reputation opponent, and one
+who defects for selfish reasons. Finally, a model based on per-pair
+reputation allows for later considering strategies that involve lying
+about reputation, allowing us to potentially simulate more complex
+social dynamics.
 
 \section{Our model}
 
 \subsection{Parameters}
 
-The basic model comprises a series of rounds in which a number of donor-receiver games are played. We use the following parameters:
+The basic model comprises a series of rounds in which a number of
+donor-receiver games are played. We use the following parameters:
 
 \begin{itemize}
 \item $N$ is the size of the population to be tested.
 \item $I$ is the number of donor-receiver interactions per round.
-\item $b$ is the benefit-cost ratio (fitness benefit to recipient over cost to donor).
-\item $\omega$ is the selection coefficient (magnitude of cost to donor).
+\item $b$ is the benefit-cost ratio (fitness benefit to recipient over
+  cost to donor).
+\item $\omega$ is the selection coefficient (magnitude of cost to
+  donor).
 \item $\mu$ is the strategy mutation probability
-\item $c$ is the fraction of players that are unconditional cooperators
+\item $c$ is the fraction of players that are unconditional
+  cooperators
 \item $d$ is the fraction that are unconditional defectors.
 \end{itemize}
 
@@ -50,14 +90,25 @@ The basic model comprises a series of rounds in which a number of donor-receiver
 Our model has the following state variables:
 
 \begin{itemize}
-\item $M \in \mathcal{M}_N(\{0,1\})$ is an $N \times N$ matrix representing the opinions each individual has of the others; $M_{ij}$ is 1 if player $i$ donated to $j$ the last time they had the chance and 0 if $i$ was selfish. Initially, $M$ is the zero matrix.
-\item $f \in [0, \infty)^N$ is a vector of fitnesses in the current round; at the end of the round, individuals reproduce with probability proportional to their fitness.
+\item $M \in \mathcal{M}_N(\{0,1\})$ is an $N \times N$ matrix
+  representing the opinions each individual has of the others;
+  $M_{ij}$ is 1 if player $i$ donated to $j$ the last time they had
+  the chance and 0 if $i$ was selfish. Initially, $M$ is the zero
+  matrix.
+\item $f \in [0, \infty)^N$ is a vector of fitnesses in the current
+  round; at the end of the round, individuals reproduce with
+  probability proportional to their fitness.
 \item $r \in [0,1]^N$ is a vector of reputations of individuals.
-\item $s \in [0,1]^N$ is a vector of strategies; if $s_i = x$, then player $i$ will donate to any players with $r_i \ge x$ and keep the reward against other players.
+\item $s \in [0,1]^N$ is a vector of strategies; player $i$ will
+  donate to any player $j$ with $r_j > s_i$ and keep the reward
+  against other players.
 \end{itemize}
 
 \subsection{Round protocol}
-The simulation is initialized by giving each player a random strategy: unconditional cooperation with probability $c$, unconditional defection with probability $d$, and a uniform $s \in [0,1]$ with probability $1 - c- d$. $M$ is originally set to be $0$. 
+The simulation is initialized by giving each player a random strategy:
+unconditional cooperation with probability $c$, unconditional
+defection with probability $d$, and a uniform $s \in [0,1]$ with
+probability $1 - c- d$. $M$ is originally set to be $0$.
 
 Each round comprises the following steps:
 
@@ -67,42 +118,86 @@ Each round comprises the following steps:
 \item Determine the results of $I$ interactions (see below).
 \item Set entries of $f$ according to the results of the interactions.
 \item Set entries of $M$ according to the results of the interactions.
-\item Choose a player to die at random and one to reproduce proportional to fitness. Replace the dead player with a copy of the reproducing one (It inherits the appropriate row and column of $M$ entries). 
-\item With probability $\mu$, the strategy of the new player resets randomly as in the initialization phase.
+\item Choose a player to die at random and one to reproduce
+  proportional to fitness. Replace the dead player with a copy of the
+  reproducing one (inheriting the appropriate row and column of $M$).
+\item With probability $\mu$, the strategy of the new player resets
+  randomly as in the initialization phase.
 \end{enumerate}
 
 \subsection{PageRank}
-\newcommand{\tM}{\tilde M}
-We think of the matrix $M$ as a directed graph with some $M_{ij} = 1$ representing an edge from $j$ to $i$---in other words $j$ has endorsed $i$. Noting an analogy between these endorsements and links between web pages, we run the standard page rank algorithm on this graph.
+\newcommand{\tM}{\tilde M} We think of the matrix $M$ as a directed
+graph with some $M_{ij} = 1$ representing an edge from $j$ to $i$---in
+other words $j$ has endorsed $i$. Noting an analogy between these
+endorsements and links between web pages, we run the standard page
+rank algorithm on this graph.
 
-Given a matrix $M$, we compute the PageRank as follows. Let $\tM$ be the column-normalization of $M$, so that $\tM_i = \frac{M_i}{\sum_j M_{ij}}$. (We need a column-normalized matrix to run PageRank). The idea of PageRank is to treat $\tM$ as a Markov chain and find its stationary probability. The Perron-Frobenius theorem says that $\tM$ has at a unique non-negative eigenvector (and therefore a unique PageRank vector) if and only if it is irreducible. But we are not necessarily guaranteed that this is the case (for example, if an unconditional cooperator donates to an unconditional defector, then the chain is reducible). Therefore, we add some ``teleportation probability'' $\alpha$ such that from any given state there is a probability $1-\alpha$ of going to a random state.
+Given a matrix $M$, we compute the PageRank as follows. Let $\tM$ be
+the column-normalization of $M$, so that $\tM_i = \frac{M_i}{\sum_j
+  M_{ij}}$. (We need a column-normalized matrix to run PageRank). The
+idea of PageRank is to treat $\tM$ as a Markov chain and find its
+stationary probability. The Perron-Frobenius theorem says that $\tM$
+has a unique non-negative eigenvector (and therefore a unique PageRank
+vector) if and only if it is irreducible. But we are not necessarily
+guaranteed that this is the case: there easily may be a player who has
+not been cooperated with. Therefore, we add some ``teleportation
+probability'' $\alpha$ such that from any given state there is a
+probability $1-\alpha$ of going to a random state.
 
-We compute PageRank using the iterated multiplication method; that is, let $u$ be a uniform vector, $r_0 = u$, and let $r_i = (1-\alpha)\tilde M r_{i-1} + \alpha u$. Once the difference between successive $r_i$ is small enough, the last computed vector is the PageRank.
+We compute PageRank using the iterated multiplication method; that is,
+let $u$ be a uniform vector, $r_0 = u$, and let $r_i =
+(1-\alpha)\tilde M r_{i-1} + \alpha u$. Once the difference between
+successive $r_i$ is small enough, the last computed vector is the
+PageRank.
 
-We make one modification to the PageRank algorithm. Because $r$ is normalized to the sum of the entries being $1$, this algorithm does not discriminate between the entire population cooperating and the entire population defecting. Therefore, at the end we multiply $r$ by $\frac{C}{(N-1)}$ where $C$ is the sum of the opinion matrix (a measure of how cooperative the current population is). Note that the maximum of $C$ is $N(N-1)$ (if everyone is cooperating), so the maximum of $r$ is all ones.
+We make one modification to the PageRank algorithm. Because $r$ is
+normalized to the sum of the entries being $1$, this algorithm does
+not discriminate between the entire population cooperating and the
+entire population defecting. Therefore, at the end we multiply $r$ by
+$C/(N-1)$, where $C = \sum_{i,j} M_{ij}$ is the sum of the entries in
+the opinion matrix (a measure of how cooperative the current
+population is). Note that $0 \le C \le N(N-1)$, the lower bound
+occurring if all players are defecting and the upper bound if everyone
+is cooperating. Hence the maximum of each $r_i$ is $1$.
 
 \subsection{Interaction protocol}
-$I$ times, an ordered pair $(i,j)$ of distinct players is chosen independently of all other pairs (note that this means that in a given round, the same pair can be chosen more than once). $i$ has a choice to decrease its own fitness by $\omega$ to increase that of the $j$ by $b \omega$. It chooses according to its strategy doing so iff $s_i < r_j$. If it did, $M_{ij}$ is set to one, otherwise $M_{ij}$ is set to $0$. 
+In each round $I$ ordered pairs $(i,j)$ of distinct players are
+chosen, each pair independent of the others (note that this means that
+in a given round, the same pair can be chosen more than once). Each
+$i$ has a choice to decrease its own fitness by $\omega$ to increase
+the fitness of $j$ by $b \omega$. The choice is made according to the
+strategy of $i$: cooperation occurs if and only if $s_i < r_j$. If
+cooperation occurs, $M_{ij}$ is set to one, otherwise $M_{ij}$ is set
+to $0$.
 
 \subsection{Modifications}
 We tested a few modifications of the original model
 \begin{enumerate}
 %please add or remove as necessary
 \item
-There is a small probability $\alpha$ that a player does the opposite of what it wants to in an interaction
+There is a small probability $\alpha$ that a player does the opposite
+of what it wants to in an interaction
 \item
-There is a small probability $\beta$ that after a donation, the corresponding entry of $M$ is not updated.
+There is a small probability $\beta$ that after a donation, the
+corresponding entry of $M$ is not updated.
 \item
-Each player computes a different number of steps $n_i$ of the PageRank iterated multiplication representing different capacities for analysis of social situations. For example, someone who just does $1$ step would measure reputation as the total number of donations a player gave replicating Nowak and Sigmund's original model. The $n_i$ are initialized randomly, are inherited, and mutate with some probability $\mu_n$. There is a fitness cost $p n_i$ to each player $i$.
+Each player computes a different number of steps $n_i$ of the PageRank
+iterated multiplication representing different capacities for analysis
+of social situations. For example, someone who just does $1$ step
+would measure reputation as the total number of donations a player
+gave replicating Nowak and Sigmund's original model. The $n_i$ are
+initialized randomly, are inherited, and mutate with some probability
+$\mu_n$. There is a fitness cost $p n_i$ to each player $i$.
 \item
-When an $M_{ij}$ entry is updated a weighted average with some weight $m$ is taken with the new value and the old value representing some memory of past interactions.
+When an $M_{ij}$ entry is updated a weighted average with some weight
+$m$ is taken with the new value and the old value representing some
+memory of past interactions.
 \end{enumerate}
 
 \section{Results}
 
 \section{Conclusion}
 
-\bibliographystyle{plain}
-\bibliography{refs}
+\bibliographystyle{plain} \bibliography{refs}
 
 \end{document}
