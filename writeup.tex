@@ -19,9 +19,17 @@ A key question in the study of evolutionary dynamics has been how indirect recip
 
 \section{Introduction}
 
+In studying the evolutionary origins of altruistic behavior, one of the most common mechanisms considered is that of reciprocity: an individual accepts a cost to itself in order to grant a greater benefit to another. In the most intuitive versions of reciprocity, the payback (in the form of a reciprocal donation) is immediate; that is, the players are playing some iterated game where non-cooperation can immediately be punished. However, ``in the wild'' we often observe even more altruistic behavior, in which an individual sacrifices some fitness even when it is not guaranteed that the beneficiary will ever have the ability to reciprocate, under the assumption that other members of the population will do a similar service to the donor. This type of interaction is termed ``indirect reciprocity'' and there are several proposed mechanisms for it.
 
+We consider the mechanism of reputation: when an individual chooses to donate, it enhances their reputation in the population, and individuals are more likely to donate to individuals with higher reputation. Reputation models often have the problem that individuals are penalized equally for being selfish no matter the reputation of their opponent, so that if an otherwise generous player has the bad luck to be paired against several sociopaths, their reputation will be penalized unfairly. We try to find a model that limits these effects.
 
-\section{Related Work}
+In this paper, we adapt the PageRank algorithm from Web searching to give a reputation score to each individual based on the matrix of pairwise opinions of each individual about each other. These opinions are based on the last interaction between the two. We give %TODO
+
+Using this model, we show that indirect reciprocity can emerge with a much lower benetif/cost ratio than previously shown. %TODO based on experimental results
+
+The remainder of the paper is as follows: in section \ref{sec:related}, we go over previous work and explain our novel contributions. In section \ref{sec:model}, we describe our model and explain our parameter choices. In section \ref{sec:results}, we describe and analyze the results of our simulations. Finally, in section \ref{sec:conclusion} we draw conclusions and suggest further areas of research.
+
+\section{Related Work}\label{sec:related}
 
 Previously, Nowak and Sigmund have modeled indirect reciprocity with a concept of ``image'' \cite{nowak_evolution_1998}. Each individual in the simulation is given an image score. During each round of a stochastic simulation, individuals play a number of single-round donor-receiver games with other members of the population and have the opportunity to be either altruistic or selfish; the former increases the image score and the latter decreases it. Individuals’ strategies are to donate if the recipient’s image score is above some threshold, but keep the reward otherwise.
 
@@ -30,6 +38,7 @@ Under these circumstances, Nowak and Sigmund found that in the simplest model, w
 This model is simple and elegant, but it has a few drawbacks. For instance, it discretizes reputation, which may lead to strange edge effects. Furthermore, it penalizes equally an individual who defects because they are playing against a low-reputation opponent, and one who defects for selfish reasons. Finally, a model based on per-pair reputation allows for later considering strategies that involve lying about reputation, allowing us to potentially simulate more complex social dynamics.
 
 \section{Our model}
+\label{sec:model}
 
 \subsection{Parameters}
 
@@ -99,8 +108,10 @@ When an $M_{ij}$ entry is updated a weighted average with some weight $m$ is tak
 \end{enumerate}
 
 \section{Results}
+\label{sec:results}
 
 \section{Conclusion}
+\label{sec:conclusion}
 
 \bibliographystyle{plain}
 \bibliography{refs}
