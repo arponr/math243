@@ -49,16 +49,18 @@ Each round comprises the following steps:
 \item Determine the results of $I$ interactions (see below).
 \item Set entries of $f$ according to the results of the interactions.
 \item Set entries of $M$ according to the results of the interactions.
+\item Choose a player to die at random and one to reproduce proportional to fitness. Replace the dead player with a copy of the reproducing one (It inherits $M$ entries).
 \end{enumerate}
 
 \subsection{PageRank}
 \newcommand{\tM}{\tilde M}
+We think of the matrix $M$ as a directed graph with some $M_{ij} = 1$ representing an edge from $j$ to $i$--$j$ has endorsed $i$. Noting an analogy between these endorsements and links between web pages, we run the standard page rank algorithm on this graph.
 
 Given a matrix $M$, we compute the PageRank as follows. Let $\tM$ be the column-normalization of $M$, so that $\tM_i = \frac{M_i}{\sum_j M_{ij}}$. (We need a column-normalized matrix to run PageRank). The idea of PageRank is to treat $\tM$ as a Markov chain and find its stationary probability. The Perron-Frobenius theorem says that $\tM$ has at a unique non-negative eigenvector (and therefore a unique PageRank vector) if and only if it is irreducible. But we are not necessarily guaranteed that this is the case (for example, if an unconditional cooperator donates to an unconditional defector, then the chain is reducible). Therefore, we add some ``teleportation probability'' $\alpha$ such that from any given state there is a probability $1-\alpha$ of going to a random state.
 
 We compute PageRank using the iterated multiplication method; that is, let $u$ be a uniform vector, $r_0 = u$, and let $r_i = (1-\alpha)\tilde M r_{i-1} + \alpha u$. Once the difference between successive $r_i$ is small enough, the last computed vector is the PageRank.
 
-We make one modification to the PageRank algorithm. Because $r$ is $L_1$-normalized, this algorithm does not discriminate between the entire population cooperating and the entire population defecting. Therefore
+We make one modification to the PageRank algorithm. Because $r$ is normalized to the sum of the entries being $1$, this algorithm does not discriminate between the entire population cooperating and the entire population defecting. Therefore, we normalize to the sum being the average number of cooperations per player.
 
 \subsection{Interaction protocol}
 
