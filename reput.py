@@ -199,6 +199,7 @@ def run():
             sys.stdout.write(prog)
             wipe = "\b" * len(prog)
             sys.stdout.flush()
+    arrs['params'] = dict((k,v) for k, v in globals().iteritems() if k.upper() == k)
     return arrs
 
 if __name__ == "__main__":
