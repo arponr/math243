@@ -162,9 +162,9 @@ def run_on_proc(q, pr):
             else:
                 arp[t] = np.mean(rep)
             ain[t] = np.mean(ind)
-            aft[t] = np.mean(fit)
             fit, opi = interact(fit, opi, rep, stg, ind)
             fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
+            aft[t] = np.mean(fit)
             fit = np.ones(N)
         q.put((pr, 'return', {'fit':fit, 'stg':stg, 'ind':ind, 'rep':rep, 
                'ast':ast, 'arp':arp, 'ain':ain, 'aft':aft}))
