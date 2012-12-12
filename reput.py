@@ -102,7 +102,7 @@ for (int t = 0; t < m; t++) {
     }
     newval = 0;
     if ((rep((int) ind(don),rec) > stg(don) && rands(t) > ERR) || rands(t) < ERR) {
-        newval = (sands(t) < GOS) ? 1 : 0;
+        newval = (sands(t) < GOS) ? 1 : opi(don, rec);
         fit(don) -= C * SEL;
         fit(rec) += B * SEL;
     }
@@ -217,6 +217,7 @@ def run():
             wipe = "\b" * len(prog)
             sys.stdout.flush()
     #arrs.update(avg_trials(arrs))
+    arrs['params'] = dict((k,v) for k, v in globals().iteritems() if k.upper() == k)
     return arrs
 
 if __name__ == "__main__":

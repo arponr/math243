@@ -2,6 +2,56 @@
 \title{Simulating Evolutionary Reputation using PageRank}
 \author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
 \date{\today}
+\usepackage{enumitem, verbatim}
+
+\newcommand{\lf}{\left}
+\newcommand{\ri}{\right}
+\newcommand{\md}{\middle}
+\newcommand{\mt}{\ri. & \lf.} 
+\newcommand{\f}{\frac} 
+\newcommand{\df}[2]{{}^{#1} \! /_{#2}} 
+\newcommand{\into}{\hookrightarrow}
+\newcommand{\onto}{\twoheadrightarrow}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\sig}{sig}
+\DeclareMathOperator{\lcm}{lcm}
+\DeclareMathOperator{\pf}{pf}
+\DeclareMathOperator{\rank}{rank}
+\newcommand{\triv}{\mathrm{triv}}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareMathOperator{\Ext}{Ext}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\vol}{vol}
+\DeclareMathOperator{\mesh}{mesh}
+\DeclareMathOperator{\ad}{ad}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\image}{im}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\re}{Re}
+\newcommand{\id}{\mathrm{id}}
+\DeclareMathOperator{\orb}{orb}
+\DeclareMathOperator{\fix}{fix}
+\DeclareMathOperator{\stab}{stab}
+\newcommand{\herm}[1]{{\overline{#1}^\mathbf T}}
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\td}[1]{\tilde{#1}}
+\newcommand{\Hlt}{\mathbb H}
+\newcommand{\C}{\mathbb C}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\T}{\mathbb T}
+\newcommand{\F}{\mathbb F}
+\newcommand{\RP}{\mathbb{RP}}
+\newcommand{\CP}{\mathbb{CP}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\om}{\omega}
+\newcommand{\pdif}[2]{\f{\partial #1}{\partial #2}}
+\newcommand{\dif}[2]{\f{d#1}{d#2}}
+\newcommand{\bt}{\bullet}
 
 \begin{document}
 
@@ -23,9 +73,79 @@ This model is simple and elegant, but it has a few drawbacks. For instance, it d
 
 \section{Our model}
 
+\subsection{Parameters}
+
+The basic model comprises a series of rounds in which a number of donor-receiver games are played. We use the following parameters:
+
+\begin{itemize}
+\item $N$ is the size of the population to be tested.
+\item $I$ is the number of donor-receiver interactions per round.
+\item $b$ is the benefit-cost ratio (fitness benefit to recipient over cost to donor).
+\item $\omega$ is the selection coefficient (magnitude of cost to donor).
+\item $\mu$ is the strategy mutation probability
+\item $c$ is the fraction of players that are unconditional cooperators
+\item $d$ is the fraction that are unconditional defectors.
+\end{itemize}
+
+and the following variables:
+\begin{itemize}
+\item $M \in \mathcal{M}_N(\{0,1\})$ is an $N \times N$ matrix representing the opinions each individual has of the others; $M_{ij}$ is 1 if player $i$ donated to $j$ the last time they had the chance and 0 if $i$ was selfish. Initially, $M$ is the zero matrix.
+\item $f \in [0, \infty)^N$ is a vector of fitnesses in the current round; at the end of the round, individuals reproduce with probability proportional to their fitness.
+\item $r \in [0,1]^N$ is a vector of reputations of individuals.
+\item $s \in [0,1]^N$ is a vector of strategies; if $s_i = x$, then player $i$ will donate to any players with $r_i \ge x$ and keep the reward against other players.
+\end{itemize}
+
+\subsection{Round protocol}
+The simulation is initialized by giving each player a random strategy: unconditional cooperation with probability $c$, unconditional defection with probability $d$, and a uniform $s \in [0,1]$ with probability $1 - c- d$. $M$ is originally set to be $0$. 
+
+Each round comprises the following steps:
+
+\begin{enumerate}
+\item Set all $f_i$ to 1.
+\item Compute $r_i$ according to the PageRank algorithm (see below).
+\item Determine the results of $I$ interactions (see below).
+\item Set entries of $f$ according to the results of the interactions.
+\item Set entries of $M$ according to the results of the interactions.
+\item Choose a player to die at random and one to reproduce proportional to fitness. Replace the dead player with a copy of the reproducing one (It inherits the appropriate row and column of $M$ entries). 
+\item With probability $\mu$, the strategy of the new player resets randomly as in the initialization phase.
+\end{enumerate}
+
+\subsection{PageRank}
+\newcommand{\tM}{\tilde M}
+We think of the matrix $M$ as a directed graph with some $M_{ij} = 1$ representing an edge from $j$ to $i$---in other words $j$ has endorsed $i$. Noting an analogy between these endorsements and links between web pages, we run the standard page rank algorithm on this graph.
+
+Given a matrix $M$, we compute the PageRank as follows. Let $\tM$ be the column-normalization of $M$, so that $\tM_i = \frac{M_i}{\sum_j M_{ij}}$. (We need a column-normalized matrix to run PageRank). The idea of PageRank is to treat $\tM$ as a Markov chain and find its stationary probability. The Perron-Frobenius theorem says that $\tM$ has at a unique non-negative eigenvector (and therefore a unique PageRank vector) if and only if it is irreducible. But we are not necessarily guaranteed that this is the case (for example, if an unconditional cooperator donates to an unconditional defector, then the chain is reducible). Therefore, we add some ``teleportation probability'' $\alpha$ such that from any given state there is a probability $1-\alpha$ of going to a random state.
+
+We compute PageRank using the iterated multiplication method; that is, let $u$ be a uniform vector, $r_0 = u$, and let $r_i = (1-\alpha)\tilde M r_{i-1} + \alpha u$. Once the difference between successive $r_i$ is small enough, the last computed vector is the PageRank.
+
+We make one modification to the PageRank algorithm. Because $r$ is normalized to the sum of the entries being $1$, this algorithm does not discriminate between the entire population cooperating and the entire population defecting. Therefore, we normalize to the sum being the average number of cooperations per player.
+
+\subsection{Interaction protocol}
+$I$ times, an ordered pair $(i,j)$ of distinct players is chosen independently of all other pairs (note that this means that in a given round, the same pair can be chosen more than once). $i$ has a choice to decrease its own fitness by $\omega$ to increase that of the $j$ by $b \omega$. It chooses according to its strategy doing so iff $s_i < r_j$. If it did, $M_{ij}$ is set to one, otherwise $M_{ij}$ is set to $0$. 
+
+\subsection{Modifications}
+We tested a few modifications of the original model
+\begin{enumerate}
+%please add or remove as necessary
+\item
+There is a small probability $\alpha$ that a player does the opposite of what it wants to in an interaction
+\item
+There is a small probability $\beta$ that after a donation, the corresponding entry of $M$ is not updated.
+\item
+Each player computes a different number of steps $n_i$ of the PageRank iterated multiplication representing different capacities for analysis of social situations. For example, someone who just does $1$ step would measure reputation as the total number of donations a player gave replicating Nowak and Sigmund's original model. The $n_i$ are initialized randomly, are inherited, and mutate with some probability $\mu_n$. There is a fitness cost $p n_i$ to each player $i$.
+\item
+When an $M_{ij}$ entry is updated a weighted average with some weight $m$ is taken with the new value and the old value representing some memory of past interactions.
+\end{enumerate}
+
 \section{Results}
 
 \section{Conclusion}
+
+\section{Code}
+\begin{verbatim}
+[Insert Code Here]
+\end{verbatim}
+
 
 \bibliographystyle{plain}
 \bibliography{refs}
