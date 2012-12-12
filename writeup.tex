@@ -4,6 +4,55 @@
 \date{\today}
 \usepackage{enumitem, verbatim}
 
+\newcommand{\lf}{\left}
+\newcommand{\ri}{\right}
+\newcommand{\md}{\middle}
+\newcommand{\mt}{\ri. & \lf.} 
+\newcommand{\f}{\frac} 
+\newcommand{\df}[2]{{}^{#1} \! /_{#2}} 
+\newcommand{\into}{\hookrightarrow}
+\newcommand{\onto}{\twoheadrightarrow}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\sig}{sig}
+\DeclareMathOperator{\lcm}{lcm}
+\DeclareMathOperator{\pf}{pf}
+\DeclareMathOperator{\rank}{rank}
+\newcommand{\triv}{\mathrm{triv}}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareMathOperator{\Ext}{Ext}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\vol}{vol}
+\DeclareMathOperator{\mesh}{mesh}
+\DeclareMathOperator{\ad}{ad}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\image}{im}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\re}{Re}
+\newcommand{\id}{\mathrm{id}}
+\DeclareMathOperator{\orb}{orb}
+\DeclareMathOperator{\fix}{fix}
+\DeclareMathOperator{\stab}{stab}
+\newcommand{\herm}[1]{{\overline{#1}^\mathbf T}}
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\td}[1]{\tilde{#1}}
+\newcommand{\Hlt}{\mathbb H}
+\newcommand{\C}{\mathbb C}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\T}{\mathbb T}
+\newcommand{\F}{\mathbb F}
+\newcommand{\RP}{\mathbb{RP}}
+\newcommand{\CP}{\mathbb{CP}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\om}{\omega}
+\newcommand{\pdif}[2]{\f{\partial #1}{\partial #2}}
+\newcommand{\dif}[2]{\f{d#1}{d#2}}
+\newcommand{\bt}{\bullet}
+
 \begin{document}
 
 \begin{abstract}
@@ -65,7 +114,7 @@ We make one modification to the PageRank algorithm. Because $r$ is normalized to
 \subsection{Interaction protocol}
 $I$ times two separate players $i,j$ are chosen independently of all other choices (note that this means that in a given round, the same pair can be chosen more than once). $i$ has a choice to decrease its own fitness by $\omega$ to increase that of the $j$ by $b \omega$. It chooses according to its strategy doing so iff $s_i < r_j$. If it did, $M_{ij}$ is set to one, otherwise $M_{ij}$ is set to $0$. 
 
-There were two modifications we made to this protocol in some tests. First there was a probability $\alpha$ that $i$ would do the opposite of what it wanted to. Second, there was a probability $\beta$ that even if $i$ donated to $j$, $M_{ij}$ may have been set to $0$. 
+There were two modifications we made to this protocol in some tests. First there was a probability $\alpha$ that $i$ would do the opposite of what it wanted to. Second, there was a probability $\beta$ that even if $i$ donated to $j$, $M_{ij}$ may not have been set to $0$. 
 
 \section{Results}
 
