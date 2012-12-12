@@ -33,7 +33,7 @@ DUMP = STEPS/WIDTH
 # number of threads
 PROC = 4
 #number of simulations per thread
-SIM = 5
+SIM = 4
 # reset everyone's opinions of offspring
 DIE_RESET = False
 # error rate in actions
