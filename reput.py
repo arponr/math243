@@ -70,6 +70,7 @@ def pagerank(A):
 
 def strategy_from(rand):
     return rand /(1 - PERC - PERD) - PERC/(1 - PERC - PERD)
+
 robin_dons = np.array(range(N)*(N-1))
 robin_recs = np.array(range(N-1)*N)
 def interact(fit, opi, rep, stg, ind):
