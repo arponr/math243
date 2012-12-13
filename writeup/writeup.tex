@@ -388,7 +388,7 @@ cooperativeness, as shown in figure \ref{fig:lag}.
   interactions per round, with $b=5,N=100$ over 1000 steps. It is
   apparent that the when the number of interactions higher, average
   reputation tracks current average cooperativeness much more
-  closely.}
+  closely, making cooperation much more likely to fixate.}
 
 \includegraphics[width=\textwidth]{lag50.png}
 \includegraphics[width=\textwidth]{lag500.png}
@@ -410,26 +410,21 @@ this surprising result holds and admit extreme bafflement.
 \label{sec:longrange}
 Over hundreds of thousands of rounds the typical behavior (with $b=2$,
 $c = d = 0.05$, $N = I = 100$, $\omega = 0.1$, $\mu = 0.0001$) can be
-seen in figures \ref{fig:really} and \ref{fig:what} below.
+seen in figure \ref{fig:really} below.
 
 \begin{figure}[h]
-\caption{$10^6$ rounds with the parameters listed in section
-  \ref{sec:longrange}. Green trend lines are average reputation, blue
-  are average strategy, and red are average fitness. Observe that in
-  the first two runs, cooperation emerges even after a selfish
-  strategy has fixated.}
+\caption{$10^6$ rounds (first four) and $2 \times 10^6$ rounds (second
+  four) with the parameters $b=2$, $c = d = 0.05$, $N = I = 100$,
+  $\omega = 0.1$, $\mu = 0.0001$. Green trend lines are average
+  reputation, blue are average strategy, and red are average
+  fitness. Observe that in the first two runs, cooperation emerges
+  even after a selfish strategy has fixated; in the fifth run,
+  cooperation is invaded by a high-threshold, selfish strategy.}
 
 \includegraphics[width=\textwidth]{really.png}
-\label{fig:really}
-\end{figure}
-
-\begin{figure}[h]
-\caption{$2 \times 10^6$ rounds with the parameters listed in section
-  \ref{sec:longrange}. Note how in the first run, cooperation is
-  invaded by a high-threshold, selfish strategy.}
-
 \includegraphics[width=\textwidth]{what.png}
-\label{fig:what}
+\label{fig:really}
+
 \end{figure}
 
 This replicates Sigmund and Nowak's result
@@ -451,7 +446,13 @@ and the last on there being unconditional defectors.
 Finally, we tested our simulation with the limited information variant
 detailed in section \ref{sec:inter_protocol}. We tested a simulation
 with $b=2, c=d=0.05, N=100$, and recording probability ranging from
-$p=0.1$ to $p=1$ in increments of 0.1. Figure \ref{fig:gos} summarizes our findings:
+$p=0.1$ to $p=1$ in increments of 0.1. Figure \ref{fig:gos} summarizes
+our findings: even with very low probability that an interaction will
+be recorded, there is still a small probability that cooperation will
+fixate. Note that because each individual makes many interactions,
+this compensates for the low probability and we are able to get
+cooperation even when $p < \f{b}{c}$, which is the threshold for
+all-or-nothing incomplete information \cite{nowak_five_2006}.
 
 \begin{figure}[h]
 \caption{Histogram of proportion of cooperations per round after 64
@@ -465,6 +466,8 @@ $p=0.1$ to $p=1$ in increments of 0.1. Figure \ref{fig:gos} summarizes our findi
 
 \section{Conclusion}
 \label{sec:conclusion}
+
+We have developed a model for reputation dynamics that is robust
 
 \section{Further directions}
 
