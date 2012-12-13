@@ -6,6 +6,7 @@
 \usepackage{enumitem, graphicx, subcaption}
 \usepackage[lmargin=1.5in, tmargin=1.25in, 
             rmargin=1.5in, bmargin=1.25in]{geometry}
+\usepackage{hyperref}
 
 \setlength{\abovecaptionskip}{3pt}
 \setlength{\belowcaptionskip}{2pt}
@@ -337,6 +338,13 @@ players $A$ and $B$, player $A$ interacts with $B$ with probability
 $1/N$. Therefore if $I\le N$ we expect on average one interaction
 between any two given players before one dies. This should be enough
 to minimize the effects of our model proxying direct reciprocity.
+
+\subsection{Reference implementation}
+\label{sec:implementation}
+
+We implemented our simulation in Python using SciPy, NumPy, Weave, and
+Matplotlib. A Git repository of our implementation can be found at
+\url{https://github.com/benskuhn/math153}.
 
 \section{Results}
 \label{sec:results}
