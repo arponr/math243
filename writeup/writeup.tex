@@ -4,7 +4,7 @@
 \author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
 \date{\today}
 \usepackage{enumitem,graphicx}
-\usepackage[margin=1.75in]{geometry}
+%\usepackage[margin=1.75in]{geometry}
 
 \newcommand{\lf}{\left}
 \newcommand{\ri}{\right}
@@ -319,6 +319,7 @@ selfish individuals and refusing to cooperate.
 \end{enumerate}
 
 \subsection{Interactions per round}
+\label{sec:inter_per_round}
 
 While it is customary to have every member of the population interact
 every round of the simulation, we chose instead to pick random pairs
@@ -343,7 +344,58 @@ to minimize the effects of our model proxying direct reciprocity.
 
 \subsection{Dependence on iterations per round}
 
+For each of the population sizes $N \in \{10,20,50,100\}$, increasing
+the number of iterations per round increases the probability that
+cooperation will fixate, as shown in figures
+\ref{fig:pop10iter}--\ref{fig:pop100iter} (with $b=5, \om=0.1,$ and
+$I$ ranging over $10,20,50,100,200,500$, excluding values greater than
+$I^2$). This is expected, as a larger number of interactions per round
+means that the opinion matrix more closely reflects the current
+strategy distribution, and thus a player's reputation is a better
+indicator of their current strategy.
+
+\begin{figure}[h]
+\caption{A histogram of proportion of cooperations per round after
+  25,000 rounds with $N=10$ and $I \in \{10,20,50\}$.}
+
+\includegraphics[width=\textwidth]{pop10iter.png}
+\label{fig:pop10iter}
+\end{figure}
+
+\begin{figure}[h]
+\caption{A histogram of proportion of cooperations per round after
+  25,000 rounds with $N=20$ and $I \in \{10,20,50,100,200\}$.}
+
+\includegraphics[width=\textwidth]{pop20iter.png}
+\label{fig:pop20iter}
+\end{figure}
+
+\begin{figure}[h]
+\caption{A histogram of proportion of cooperations per round after
+  25,000 rounds with $N=50$ and $I \in \{10,20,50,100,200,500\}$.}
+
+\includegraphics[width=\textwidth]{pop50iter.png}
+\label{fig:pop50iter}
+\end{figure}
+
+\begin{figure}[h]
+\caption{A histogram of proportion of cooperations per round after
+  25,000 rounds with $N=100$ and $I \in \{10,20,50,100,200,500\}$.}
+
+\includegraphics[width=\textwidth]{pop100iter.png}
+\label{fig:pop100iter}
+\end{figure}
+
 \subsection{Dependence on population size}
+
+In an extremely counter-intuitive twist, we found that larger
+populations had a \emph{higher} probability of fixating at cooperation
+with $I=N$. This implies that the number of interactions per round
+required to have a probability $p$ of cooperation fixating grows
+significantly \emph{sublinearly} with increasing population size
+rather than linearly as our argument in section
+\ref{sec:inter_per_round} suggests. We were unable to determine why
+this surprising result holds and admit extreme bafflement.
 
 \subsection{Long-range behavior}
 \label{sec:longrange}
