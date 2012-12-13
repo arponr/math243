@@ -42,9 +42,9 @@ if __name__ == "__main__":
                 fit_x[k].extend([i] * trials * N)
                 cps_x[k].extend([i] * trials)
                 if vary == 0:
-                    weight[k].extend([1] * trials * N)
+                    weight[k].extend([1/trials] * trials * N)
                 else:
-                    weight[k].extend([1/N] * trials * N)
+                    weight[k].extend([1/(N*trials)] * trials * N)
                 for j in xrange(trials):
                     stg_y[k].extend(data['pst'][j][k])
                     rep_y[k].extend(data['prp'][j][k])
@@ -55,3 +55,4 @@ if __name__ == "__main__":
         plt.hexbin(cps_x[k], cps_y[k], weight[k], cmap=cm.binary, 
                    gridsize=10, reduce_C_function=sum)
         plt.savefig('data_%d_%d.png' % (vary, k), dpi=300)
+        plt.colorbar()
