@@ -32,9 +32,58 @@ than previously observed.
 
 \section{Introduction}
 
+In studying the evolutionary origins of altruistic behavior, one of
+the most common mechanisms considered is that of reciprocity: an
+individual accepts a cost to itself in order to grant a greater
+benefit to another. In the most intuitive versions of reciprocity, the
+payback (in the form of a reciprocal donation) is immediate; that is,
+the players are playing some iterated game where non-cooperation can
+immediately be punished. However, ``in the wild'' we often observe
+even more altruistic behavior, in which an individual sacrifices some
+fitness even when it is not guaranteed that the beneficiary will ever
+have the ability to reciprocate, under the assumption that other
+members of the population will do a similar service to the donor. This
+type of interaction is termed ``indirect reciprocity'' and there are
+several proposed mechanisms for it.
 
+We consider the mechanism of reputation: when an individual chooses to
+donate, it enhances their reputation in the population, and
+individuals are more likely to donate to individuals with higher
+reputation. Reputation models sometimes suffer from several
+problems. In many models, individuals are penalized equally for being
+selfish no matter the reputation of their opponent, so that if an
+otherwise generous player has the bad luck to be paired against
+several sociopaths, their reputation will be penalized unfairly. Also,
+Leimar and Hammerstein \cite{leimar_evolution_2001} argue that in many
+reputational models, the dominant strategy is to consider only one's
+own reputation and not the recipients, and allowing these strategies
+threatens the evolutionary stability of cooperative ones. We try to
+find a model that limits these effects.
 
-\section{Related Work}
+In this paper, we adapt the PageRank algorithm from Web searching to
+give a reputation score to each individual based on the matrix of
+pairwise opinions of each individual about each other. These opinions
+are based on the last interaction between the two. We give a
+stochastic model for the evolutionary dynamics of a population
+undergoing reputation interactions and give some arguments as to why
+this model is realistic and avoids the problems mentioned above.
+%TODO
+
+Using this model, we show that indirect reciprocity can emerge with a
+much lower benefit/cost ratio than previously shown. We show that
+altruism can spontaneously emerge and fixate even in large populations
+of reasonably selfish individuals.
+%TODO based on experimental results
+
+The remainder of the paper is as follows: in section
+\ref{sec:related}, we go over previous work and explain our novel
+contributions. In section \ref{sec:model}, we describe our model and
+explain our parameter choices. In section \ref{sec:results}, we
+describe and analyze the results of our simulations. Finally, in
+section \ref{sec:conclusion} we draw conclusions and suggest further
+areas of research.
+
+\section{Related Work}\label{sec:related}
 
 Previously, Nowak and Sigmund have modeled indirect reciprocity with a
 concept of ``image'' \cite{nowak_evolution_1998}. Each individual in
@@ -66,6 +115,7 @@ about reputation, allowing us to potentially simulate more complex
 social dynamics.
 
 \section{Our model}
+\label{sec:model}
 
 \subsection{Parameters}
 
@@ -194,9 +244,43 @@ $m$ is taken with the new value and the old value representing some
 memory of past interactions.
 \end{enumerate}
 
+\section{Analysis of model}
+\label{sec:analysis}
+
+\subsection{Use of PageRank}
+
+The PageRank algorithm is frequently used to calculate reputation in
+social networks \cite{pujol_extracting_2002}. There are a few features
+of PageRank that make it desirable for our simulation:
+\begin{enumerate}
+\item blablabla
+\end{enumerate}
+
+\subsection{Interactions per round}
+
+While it is customary to have every member of the population interact
+every round of the simulation, we chose instead to pick random pairs
+of members interact. This is because if two players are assured of
+encountering each other again in the future, the opinion
+matrix/PageRank system could essentially act as a proxy for a direct
+reciprocity calculation. To make sure that this effect was mitigated,
+we chose values for $I$ that ensured the two interacting organisms
+were not likely to encounter one another again before they died.
+
+Specifically, in a population of $N$, since one player dies every
+round, each player dies with probability $\frac1N$ and so a player's
+lifespan is a geometrically distributed random variable with mean
+$N$. If we pick $I=N$, then on any given round and for any given
+players $A$ and $B$, player $A$ interacts with $B$ with probability
+$\frac1N$. Therefore if $I\le N$ we expect on average one interaction
+between any two given players before one dies. This should be enough
+to minimize the effects of our model proxying direct reciprocity.
+
 \section{Results}
+\label{sec:results}
 
 \section{Conclusion}
+\label{sec:conclusion}
 
 \bibliographystyle{plain} \bibliography{refs}
 
