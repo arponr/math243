@@ -1,5 +1,7 @@
 from __future__ import division
-import matplotlib.pyplot as plt, sys
+from matplotlib import pyplot  as plt
+from matplotlib import cm
+import sys
 import numpy as np
 import cPickle
 from math import *
@@ -34,10 +36,7 @@ if __name__ == "__main__":
                     stg_y[k].extend(data['pst'][j][k])
                     rep_y[k].extend(data['prp'][j][k])
                     fit_y[k].extend(data['pft'][j][k])
-    for k in xrange(snaps):
+    for k in xrange(1, snaps):
         plt.figure()
-        heat, xed, yed = np.histogram2d(rep_y[k], rep_x[k],
-                                        bins=(50,4))
-        ext = [yed[0], yed[-1], xed[-1], xed[0]]
-        plt.imshow(heat, extent=ext, interpolation='nearest')
+        plt.hexbin(rep_x[k], rep_y[k], cmap=cm.binary, gridsize=10)
     plt.show()

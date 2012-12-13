@@ -7,4 +7,4 @@ do
     B=5 N=100 PROC=4 SIM=16 
 done
 
-python morepics.py data '[10, 20, 50, 100]'
+python morepics.py data '[10, 20, 50, 100, 200, 500]'
