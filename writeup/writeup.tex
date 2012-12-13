@@ -4,7 +4,8 @@
 \author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
 \date{\today}
 \usepackage{enumitem, graphicx, subcaption}
-\usepackage[margin=1.5in]{geometry}
+\usepackage[lmargin=1.5in, tmargin=1.25in, 
+            rmargin=1.5in, bmargin=1.25in]{geometry}
 
 \newcommand{\lf}{\left}
 \newcommand{\ri}{\right}
@@ -349,24 +350,24 @@ their current cooperativeness, as shown in Figures
 \ref{fig:lag50}--\subref{fig:lag500}.
 
 \begin{figure}[h!tbp]  
-  \begin{subfigure}{.3\linewidth}
+  \begin{subfigure}{.31\linewidth}
     \centering
     \includegraphics[width=\linewidth]{pop10iter.png}
-    \caption{$N=10$,  $I = 10, 20, 50$ from left to right.}
+    \caption{$N=10$ and $I = 10, 20, 50$ from left to right. \\}
     \label{fig:pop10iter}
   \end{subfigure}
   \hspace{.01\linewidth}
-  \begin{subfigure}{.3\linewidth}  
+  \begin{subfigure}{.31\linewidth}  
     \centering
     \includegraphics[width=\linewidth]{pop20iter.png}
-    \caption{$N=20$,  $I = 10,20,50,100,200$ from left to right.}
+    \caption{$N=20$ and $I = 10,20,50,100,200$ from left to right.}
     \label{fig:pop20iter}
   \end{subfigure}
   \hspace{.01\linewidth}
-  \begin{subfigure}{.3\linewidth}
+  \begin{subfigure}{.31\linewidth}
     \centering
     \includegraphics[width=\linewidth]{pop100iter.png}
-    \caption{$N=100$,  $I = 10,20,50,100,200,500$ from left to
+    \caption{$N=100$ and $I = 10,20,50,100,200,500$ from left to
       right.}
     \label{fig:pop100iter}
   \end{subfigure}
@@ -404,14 +405,21 @@ suggest. We were unable to determine why this surprising result holds
 and admit extreme bafflement.
 
 \begin{figure}[h!tbp]
-  \begin{subfigure}{.485\linewidth}
+  \begin{subfigure}{.31\linewidth}
     \centering
     \includegraphics[width=\linewidth]{varyN5000.png}
     \caption{After $5000$ rounds}
     \label{fig:varyN5000}
   \end{subfigure}
   \hspace{.01\linewidth}
-  \begin{subfigure}{.485\linewidth}
+  \begin{subfigure}{.31\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{varyN12500.png}
+    \caption{After $12500$ rounds}
+    \label{fig:varyN12500}
+  \end{subfigure}
+  \hspace{.01\linewidth}
+  \begin{subfigure}{.31\linewidth}
     \centering
     \includegraphics[width=\linewidth]{varyN25000.png}
     \caption{After $25000$ rounds}
@@ -473,13 +481,12 @@ this compensates for the low probability and we are able to get
 cooperation even when $p < \f{b}{c}$, which is the threshold for
 all-or-nothing incomplete information \cite{nowak_five_2006}.
 
-\begin{figure}[h]
+\begin{figure}[h!tbp]
+\includegraphics[width=.5\textwidth]{GOS.png}
 \caption{Histogram of proportion of cooperations per round after 64
   trials of 25,000 rounds with $N=I=100, B=2,c=d=0.05,$ and $p \in
   \{0.1,0.2,\dots,1\}$. It is evident that even for very low values of
   $p$, cooperation occasionally fixates.}
-
-\includegraphics[width=\textwidth]{GOS.png}
 \label{fig:gos}
 \end{figure}
 
