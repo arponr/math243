@@ -3,7 +3,7 @@
   Evolution of Indirect Reciprocity with Reputation using PageRank}  
 \author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
 \date{\today}
-\usepackage{enumitem,graphicx}
+\usepackage{enumitem, graphicx, subcaption}
 %\usepackage[margin=1.75in]{geometry}
 
 \newcommand{\lf}{\left}
@@ -336,50 +336,48 @@ to minimize the effects of our model proxying direct reciprocity.
 \subsection{Dependence on interactions per round}
 
 For each of the population sizes $N \in \{10,20,50,100\}$, increasing
-the number of interactions per round increases the probability that
-cooperation will fixate, as shown in figures
-\ref{fig:pop10iter}--\ref{fig:pop100iter} (with $b=5, \om=0.1,$ and
-$I$ ranging over $10,20,50,100,200,500$, excluding values greater than
-$I^2$). This is expected: a larger number of interactions per round
+the number of iterations per round increases the probability that
+cooperation will fixate, as shown in Figures
+\ref{fig:pop10iter}--\subref{fig:pop100iter} (with $b=5$, $\om=0.1,$
+and $I$ ranging over $10,20,50,100,200,500$, excluding values greater
+than $I^2$). This is expected: a larger number of interactions per round
 increases the potential effects of proxying direct reciprocity (see
 section \ref{sec:inter_per_round}). It also means that the opinion
 matrix more closely reflects the current strategy distribution, and
 thus a player's reputation is a better indicator of their current
 cooperativeness, as shown in figure \ref{fig:lag}.
 
-\begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after 64
-  trials of 25,000 rounds with $N=10$ and $I \in \{10,20,50\}$.}
+\begin{figure}[h!tbp]  
+  \begin{subfigure}{.485\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{pop10iter.png}
+    \caption{$N=10$,  $I = 10, 20, 50$ from left to right.}
+    \label{fig:pop10iter}
+  \end{subfigure}
+  \hspace{.01\linewidth}
+  \begin{subfigure}{.485\linewidth}  
+    \centering
+    \includegraphics[width=\linewidth]{pop20iter.png}
+    \caption{$N=20$,  $I = 10,20,50,100,200$ from left to right.}
+    \label{fig:pop20iter}
+  \end{subfigure}
 
-\includegraphics[width=\textwidth]{pop10iter.png}
-\label{fig:pop10iter}
-\end{figure}
-
-\begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after 64
-  trials of 25,000 rounds with $N=20$ and $I \in
-  \{10,20,50,100,200\}$.}
-
-\includegraphics[width=\textwidth]{pop20iter.png}
-\label{fig:pop20iter}
-\end{figure}
-
-\begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after 64
-  trials of 25,000 rounds with $N=50$ and $I \in
-  \{10,20,50,100,200,500\}$.}
-
-\includegraphics[width=\textwidth]{pop50iter.png}
-\label{fig:pop50iter}
-\end{figure}
-
-\begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after 64
-  trials of 25,000 rounds with $N=100$ and $I \in
-  \{10,20,50,100,200,500\}$.}
-
-\includegraphics[width=\textwidth]{pop100iter.png}
-\label{fig:pop100iter}
+  \begin{subfigure}{.485\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{pop50iter.png}
+    \caption{$N=50$,  $I = 10,20,50,100,200,500$ from left to
+      right.}
+    \label{fig:pop50iter}
+  \end{subfigure}
+  \hspace{.01\linewidth}
+  \begin{subfigure}{.485\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{pop100iter.png}
+    \caption{$N=100$,  $I = 10,20,50,100,200,500$ from left to
+      right.}
+    \label{fig:pop100iter}
+  \end{subfigure}
+  \caption{Histograms of proportion of cooperation after 25000 rounds}
 \end{figure}
 
 \begin{figure}[h]
@@ -399,32 +397,55 @@ cooperativeness, as shown in figure \ref{fig:lag}.
 
 In an extremely counter-intuitive twist, we found that larger
 populations had a \emph{higher} probability of fixating at cooperation
-with $I=N$. This implies that the number of interactions per round
-required to have a probability $p$ of cooperation fixating grows
-significantly \emph{sublinearly} with increasing population size
-rather than linearly as our argument in section
-\ref{sec:inter_per_round} might suggest. We were unable to determine why
-this surprising result holds and admit extreme bafflement.
+with $I=N$ (Figure \ref{fig:varyN5000}--\subref{fig:varyN25000}). This
+implies that the number of interactions per round required to have a
+probability $p$ of cooperation fixating grows significantly
+\emph{sublinearly} with increasing population size rather than
+linearly as our argument in section \ref{sec:inter_per_round} might
+suggest. We were unable to determine why this surprising result holds
+and admit extreme bafflement.
+
+\begin{figure}[h!tbp]
+  \begin{subfigure}{.485\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{varyN5000.png}
+    \caption{After $5000$ rounds}
+    \label{fig:varyN5000}
+  \end{subfigure}
+  \hspace{.01\linewidth}
+  \begin{subfigure}{.485\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{varyN25000.png}
+    \caption{After $25000$ rounds}
+    \label{fig:varyN25000}
+  \end{subfigure}
+  \caption{Histograms of proportion of cooperation with
+    $N=I=10,20,50,100,200$ from left to right}
+\end{figure}
 
 \subsection{Long-range behavior}
 \label{sec:longrange}
 Over hundreds of thousands of rounds the typical behavior (with $b=2$,
 $c = d = 0.05$, $N = I = 100$, $\omega = 0.1$, $\mu = 0.0001$) can be
-seen in figure \ref{fig:really} below.
+seen in Figures \ref{fig:really}--\subref{fig:what} below.
 
-\begin{figure}[h]
-\caption{$10^6$ rounds (first four) and $2 \times 10^6$ rounds (second
-  four) with the parameters $b=2$, $c = d = 0.05$, $N = I = 100$,
-  $\omega = 0.1$, $\mu = 0.0001$. Green trend lines are average
-  reputation, blue are average strategy, and red are average
-  fitness. Observe that in the first two runs, cooperation emerges
-  even after a selfish strategy has fixated; in the fifth run,
-  cooperation is invaded by a high-threshold, selfish strategy.}
-
-\includegraphics[width=\textwidth]{really.png}
-\includegraphics[width=\textwidth]{what.png}
-\label{fig:really}
-
+\begin{figure}[h!tbp]
+  \begin{subfigure}{.485\linewidth}
+    \includegraphics[width=\linewidth]{really.png}
+    \caption{Observe that in the first two runs, cooperation emerges
+      even after a selfish strategy has fixated.}
+    \label{fig:really}
+  \end{subfigure}
+  \hspace{.01\linewidth}
+  \begin{subfigure}{.485\linewidth}
+    \includegraphics[width=\linewidth]{what.png}
+    \caption{Note how in the first run, cooperation is invaded by a
+      high-threshold, selfish strategy.}
+    \label{fig:what}
+  \end{subfigure}
+    \caption{$10^6$ and $2 \times 10^6$ rounds with the parameters
+      listed in section \ref{sec:longrange}. Green: average
+      reputation, blue: average strategy.}
 \end{figure}
 
 This replicates Sigmund and Nowak's result
