@@ -139,6 +139,7 @@ def evolve(fit, opi, rep, stg, ind):
     else:
         opi[die] = opi[pro]
         opi[:, die] = opi[:, pro]
+        opi[die, die] = 0
     return fit, opi, rep, stg
 
 def run_on_proc(q, pr):
