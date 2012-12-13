@@ -70,10 +70,10 @@ undergoing reputation interactions and give some arguments as to why
 this model is realistic and avoids the problems mentioned above.
 %TODO
 
-Using this model, we show that indirect reciprocity can emerge with a
-much lower benefit/cost ratio than previously shown. We show that
-altruism can spontaneously emerge and fixate even in large populations
-of reasonably selfish individuals.
+Using this model, we show that indirect reciprocity can emerge in
+large populations with a much lower benefit/cost ratio than previously
+shown. We show that altruism can spontaneously emerge and fixate even
+in large populations of reasonably selfish individuals.
 %TODO based on experimental results
 
 The remainder of the paper is as follows: in section
@@ -86,15 +86,28 @@ areas of research.
 
 \section{Related Work}\label{sec:related}
 
-Previously, Nowak and Sigmund have modeled indirect reciprocity with a
-concept of ``image'' \cite{nowak_evolution_1998}. Each individual in
-the simulation is given an image score. During each round of a
-stochastic simulation, individuals play a number of single-round
-donor-receiver games with other members of the population and have the
-opportunity to be either altruistic or selfish; the former increases
-the image score and the latter decreases it. Individuals’ strategies
-are to donate if the recipient’s image score is above some threshold,
-but keep the reward otherwise.
+An initial model of indirect reciprocity was suggested by Boyd and
+Richerson \cite{boyd_evolution_1989}. In this model, individuals are
+arranged in a ring and each individual picks the strategy ``all
+defect'', ``upstream tit-for-tat'' (donate unless your potential donor
+is selfish) or ``downstream tit-for-tat'' (donate unless your
+recipient is selfish). In this model, Boyd and Richerson found that
+reciprocal strategies require relatively high concentrations before
+they are evolutionarily favored. They also found that downstream
+tit-for-tat was generally much more successful than upstream
+tit-for-tat, suggesting that strategies based on the recipient's
+reputation are more favorable evolutionarily and indicating that
+reputation-based systems may be worthy of consideration.
+
+Nowak and Sigmund have modeled indirect reciprocity with a concept of
+``image'' \cite{nowak_evolution_1998}. Each individual in the
+simulation is given an image score. During each round of a stochastic
+simulation, individuals play a number of single-round donor-receiver
+games with other members of the population and have the opportunity to
+be either altruistic or selfish; the former increases the image score
+and the latter decreases it. Individuals’ strategies are to donate if
+the recipient’s image score is above some threshold, but keep the
+reward otherwise.
 
 Under these circumstances, Nowak and Sigmund found that in the
 simplest model, without mutation, whether cooperation evolves is
@@ -110,10 +123,12 @@ This model is simple and elegant, but it has a few drawbacks. For
 instance, it discretizes reputation, which may lead to strange edge
 effects. Furthermore, it penalizes equally an individual who defects
 because they are playing against a low-reputation opponent, and one
-who defects for selfish reasons. Finally, a model based on per-pair
-reputation allows for later considering strategies that involve lying
-about reputation, allowing us to potentially simulate more complex
-social dynamics.
+who defects for selfish reasons. Finally, Leimar and Hammerstein
+\cite{leimar_evolution_2001} argue that in this model the
+evolutionarily dominant strategy is to consider only one's own
+reputation and not the recipients, and allowing these strategies
+threatens the evolutionary stability of cooperative ones. In our
+model, these effects are minimized.
 
 \section{Our model}
 \label{sec:model}
