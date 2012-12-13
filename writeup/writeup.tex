@@ -57,18 +57,19 @@ several proposed mechanisms for it.
 We consider the mechanism of reputation: when an individual chooses to
 donate, it enhances their reputation in the population, and
 individuals are more likely to donate to individuals with higher
-reputation. Reputation models sometimes suffer from several
-problems. In many models, individuals are penalized equally for being
-selfish no matter the reputation of their opponent, so that if an
-otherwise generous player has the bad luck to be paired against
-several sociopaths, their reputation will be penalized unfairly. Also,
-Leimar and Hammerstein \cite{leimar_evolution_2001} argue that in many
-reputational models, the dominant strategy is to consider only one's
-own reputation and not the recipients, and allowing these strategies
-threatens the evolutionary stability of cooperative ones. We try to
-find a model that limits these effects.
+reputation. Although reputation is one of the most obvious mechanisms
+for indirect reciprocity, many models suffer from certain
+game-theoretic problems. One is that individuals are often penalized
+equally for being selfish no matter the reputation of their opponent,
+so that if an otherwise generous player has the bad luck to be paired
+against several sociopaths, their reputation will be penalized
+unfairly. Also, Leimar and Hammerstein \cite{leimar_evolution_2001}
+argue that in many reputational models, the dominant strategy is to
+consider only one's own reputation and not the recipient's, and
+allowing strategies of this form threatens the evolutionary stability
+of cooperative ones. We try to find a model that limits these effects.
 
-In this paper, we adapt the PageRank algorithm from Web searching to
+To that end, we adapt the PageRank algorithm from Web searching to
 give a reputation score to each individual based on the matrix of
 pairwise opinions of each individual about each other. These opinions
 are based on the most recent interaction between the two. We give a
@@ -87,13 +88,15 @@ counterintuitive result that with some reasonable parameter values,
 the probability of cooperation fixating actually increases for larger
 populations.
 
-The remainder of the paper is as follows: in section
+The rest of the paper is organized as follows: in section
 \ref{sec:related}, we go over previous work and explain our novel
 contributions. In section \ref{sec:model}, we describe our model and
-explain our parameter choices. In section \ref{sec:results}, we
-describe and analyze the results of our simulations. Finally, in
-section \ref{sec:conclusion} we draw conclusions and suggest further
-areas of research.
+explain our parameter choices; in section \ref{sec:analysis}, we
+motivate and justify some of our choices and give some analysis of our
+model. In section \ref{sec:results}, we describe and analyze the
+results of our simulations. Finally, in section \ref{sec:conclusion}
+we draw conclusions and in section \ref{sec:further} we suggest
+further avenues of research.
 
 \section{Related Work}\label{sec:related}
 
@@ -526,6 +529,7 @@ detailed in section \ref{sec:pop_size}). We include some ideas for
 further work below.
 
 \section{Further directions}
+\label{sec:further}
 
 \subsection{More data}
 
