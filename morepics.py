@@ -9,7 +9,7 @@ from math import *
 if __name__ == "__main__":
     name = sys.argv[1]
     vals = eval(sys.argv[2])
-    vary = sys.argv[3]
+    vary = int(sys.argv[3])
     stg_x, stg_y = [], []
     rep_x, rep_y = [], []
     fit_x, fit_y = [], []
@@ -42,9 +42,9 @@ if __name__ == "__main__":
                 fit_x[k].extend([i] * trials * N)
                 cps_x[k].extend([i] * trials)
                 if vary == 0:
-                    weight.extend([1] * trials * N)
+                    weight[k].extend([1/trials] * trials * N)
                 else:
-                    weight.extend([1/N] * trials * N)
+                    weight[k].extend([1/(N*trials)] * trials * N)
                 for j in xrange(trials):
                     stg_y[k].extend(data['pst'][j][k])
                     rep_y[k].extend(data['prp'][j][k])
@@ -52,7 +52,7 @@ if __name__ == "__main__":
                     cps_y[k].append(data['cps'][j][k * dump] / meets)
     for k in xrange(1, snaps):
         plt.figure()
-        print cps_x[k], cps_y[k]
-        plt.hexbin(cps_x[k], cps_y[k], cmap=cm.binary, 
-                   gridsize=10)
+        plt.hexbin(cps_x[k], cps_y[k], weight[k], cmap=cm.binary, 
+                   gridsize=10, reduce_C_function=sum)
+        plt.colorbar()
         plt.savefig('data%d.png' % k, dpi=300)
