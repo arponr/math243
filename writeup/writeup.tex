@@ -254,6 +254,7 @@ occurring if all players are defecting and the upper bound if all
 players are cooperating. Hence the maximum of each $r_i$ is $1$.
 
 \subsection{Interaction protocol}
+\label{sec:inter_protocol}
 In each round $I$ ordered pairs $(i,j)$ of distinct players are
 chosen, each pair independent of the others (note that this means that
 in a given round, the same pair can be chosen more than once). Each
@@ -421,6 +422,7 @@ seen in figures \ref{fig:really} and \ref{fig:what} below.
 \includegraphics[width=\textwidth]{really.png}
 \label{fig:really}
 \end{figure}
+
 \begin{figure}[h]
 \caption{$2 \times 10^6$ rounds with the parameters listed in section
   \ref{sec:longrange}. Note how in the first run, cooperation is
@@ -444,6 +446,22 @@ they start to occur.
 The first step is dependent on there being unconditional cooperators
 and the last on there being unconditional defectors.
 
+\subsection{Limited information}
+
+Finally, we tested our simulation with the limited information variant
+detailed in section \ref{sec:inter_protocol}. We tested a simulation
+with $b=2, c=d=0.05, N=100$, and recording probability ranging from
+$p=0.1$ to $p=1$ in increments of 0.1. Figure \ref{fig:gos} summarizes our findings:
+
+\begin{figure}[h]
+\caption{Histogram of proportion of cooperations per round after 64
+  trials of 25,000 rounds with $N=I=100, B=2,c=d=0.05,$ and $p \in
+  \{0.1,0.2,\dots,1\}$. It is evident that even for very low values of
+  $p$, cooperation occasionally fixates.}
+
+\includegraphics[width=\textwidth]{GOS.png}
+\label{fig:gos}
+\end{figure}
 
 \section{Conclusion}
 \label{sec:conclusion}
