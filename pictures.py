@@ -27,9 +27,5 @@ if __name__ == "__main__":
         plt.plot(results['aft'][i], label='avg. fitness')
         plt.legend(prop={'size':3})
     plt.savefig(outname + '.png',dpi=300)
-
-    plt.figure()
-    DUMP, PROC, SIM = results['DUMP'], results['PROC'], results['SIM'] 
-    
     plt.show()
 
