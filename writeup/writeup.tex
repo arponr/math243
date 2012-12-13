@@ -4,7 +4,7 @@
 \author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
 \date{\today}
 \usepackage{enumitem, graphicx, subcaption}
-%\usepackage[margin=1.75in]{geometry}
+\usepackage[margin=1.5in]{geometry}
 
 \newcommand{\lf}{\left}
 \newcommand{\ri}{\right}
@@ -340,37 +340,30 @@ the number of iterations per round increases the probability that
 cooperation will fixate, as shown in Figures
 \ref{fig:pop10iter}--\subref{fig:pop100iter} (with $b=5$, $\om=0.1,$
 and $I$ ranging over $10,20,50,100,200,500$, excluding values greater
-than $I^2$). This is expected: a larger number of interactions per round
-increases the potential effects of proxying direct reciprocity (see
-section \ref{sec:inter_per_round}). It also means that the opinion
-matrix more closely reflects the current strategy distribution, and
-thus a player's reputation is a better indicator of their current
-cooperativeness, as shown in figure \ref{fig:lag}.
+than $I^2$). This is expected: a larger number of interactions per
+round increases the potential effects of proxying direct reciprocity
+(see section \ref{sec:inter_per_round}). It also means that the
+opinion matrix more closely reflects the current strategy
+distribution, and thus a player's reputation is a better indicator of
+their current cooperativeness, as shown in Figures
+\ref{fig:lag50}--\subref{fig:lag500}.
 
 \begin{figure}[h!tbp]  
-  \begin{subfigure}{.485\linewidth}
+  \begin{subfigure}{.3\linewidth}
     \centering
     \includegraphics[width=\linewidth]{pop10iter.png}
     \caption{$N=10$,  $I = 10, 20, 50$ from left to right.}
     \label{fig:pop10iter}
   \end{subfigure}
   \hspace{.01\linewidth}
-  \begin{subfigure}{.485\linewidth}  
+  \begin{subfigure}{.3\linewidth}  
     \centering
     \includegraphics[width=\linewidth]{pop20iter.png}
     \caption{$N=20$,  $I = 10,20,50,100,200$ from left to right.}
     \label{fig:pop20iter}
   \end{subfigure}
-
-  \begin{subfigure}{.485\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{pop50iter.png}
-    \caption{$N=50$,  $I = 10,20,50,100,200,500$ from left to
-      right.}
-    \label{fig:pop50iter}
-  \end{subfigure}
   \hspace{.01\linewidth}
-  \begin{subfigure}{.485\linewidth}
+  \begin{subfigure}{.3\linewidth}
     \centering
     \includegraphics[width=\linewidth]{pop100iter.png}
     \caption{$N=100$,  $I = 10,20,50,100,200,500$ from left to
@@ -380,17 +373,22 @@ cooperativeness, as shown in figure \ref{fig:lag}.
   \caption{Histograms of proportion of cooperation after 25000 rounds}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[h!tbp]
+  \begin{subfigure}{.485\linewidth}
+    \includegraphics[width=\textwidth]{lag50.png}
+    \caption{$I=50$}
+    \label{fig:lag50}
+  \end{subfigure}
+  \hspace{.01\linewidth}
+  \begin{subfigure}{.485\linewidth}
+    \includegraphics[width=\textwidth]{lag500.png}
+    \caption{$I=500$}
+    \label{fig:lag500}
+  \end{subfigure}
 \caption{A comparison of average number of cooperations (red) and
-  average reputation (green) for 50 (top) and 500 (bottom)
-  interactions per round, with $b=5,N=100$ over 1000 steps. It is
-  apparent that the when the number of interactions higher, average
-  reputation tracks current average cooperativeness much more
-  closely.}
-
-\includegraphics[width=\textwidth]{lag50.png}
-\includegraphics[width=\textwidth]{lag500.png}
-\label{fig:lag}
+  average reputation (green) with $b=5,N=100$ over 1000 steps. Clearly
+  when the number of interactions higher, average reputation tracks
+  current average cooperativeness much more closely.}
 \end{figure}
 
 \subsection{Dependence on population size}
