@@ -26,9 +26,9 @@ if __name__ == "__main__":
         plt.subplot(w,h,i)
         plt.plot(results['ast'][i], label='avg. coop threshold')
         plt.plot(results['arp'][i], label='avg. reputation')
-        plt.plot(results['cps'][i] / results['params'][i]['MEETS'], label='num. cooperations')
+        #plt.plot(results['cps'][i] / results['params'][i]['MEETS'], label='num. cooperations')
         #plt.plot(results['aft'][i], label='avg. fitness')
-        plt.legend(prop={'size':3})
+        plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
     plt.savefig(outname + '.png',dpi=300)
-    plt.show()
+    #plt.show()
 

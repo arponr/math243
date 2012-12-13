@@ -17,7 +17,7 @@ C = 1
 # interaction benefit
 B = 2
 # number of interactions per round
-MEETS = 500
+MEETS = 100
 # mutation probability for strategy
 MU_STG = .0001
 # mutation probability for pagerank-iterations
@@ -25,13 +25,13 @@ MU_IND = 0 #MU_IND = .0001
 # population size
 N = 100
 # number of rounds
-STEPS = 10000
+STEPS = 20000
 # console width
 WIDTH = 80
 # how often to print progress
 PROG = STEPS/WIDTH
 # how often to snapshot all data
-DUMP = 100
+DUMP = STEPS
 # number of threads
 PROC = 4
 #number of simulations per thread
