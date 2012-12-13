@@ -129,8 +129,8 @@ donor-receiver games are played. We use the following parameters:
   cost to donor).
 \item $\omega$ is the selection coefficient (magnitude of cost to
   donor).
-\item $\mu$ is the strategy mutation probability
-\item $c$ is the fraction of players that are unconditional
+\item $\mu$ is the strategy mutation probability.
+\item $c$ is the fraction of players that are unconditional.
   cooperators
 \item $d$ is the fraction that are unconditional defectors.
 \end{itemize}
@@ -179,15 +179,16 @@ Each round comprises the following steps:
 \newcommand{\tM}{\tilde M} We think of the matrix $M$ as a directed
 graph with some $M_{ij} = 1$ representing an edge from $j$ to $i$---in
 other words $j$ has endorsed $i$. Noting an analogy between these
-endorsements and links between web pages, we run the standard page
-rank algorithm on this graph. (See section \ref{sec:whypagerank} for
-an explanation of why this is a realistic algorithm for individuals to
-employ.)
+endorsements and links between web pages, we run the standard PageRank
+algorithm \cite{page_pagerank_1999} on this graph. (See section
+\ref{sec:whypagerank} for an explanation of why this is a realistic
+algorithm for individuals to employ.)
 
 Given a matrix $M$, we compute the PageRank as follows. Let $\tM$ be
 the column-normalization of $M$, so that $\tM_i = \frac{M_i}{\sum_j
-  M_{ij}}$. (We need a column-normalized matrix to run PageRank). The
-idea of PageRank is to treat $\tM$ as a Markov chain and find its
+  M_{ij}}$. (We need a column-normalized matrix to run PageRank, since
+it is based on interpreting the matrix as a Markov chain). The idea
+of PageRank is to treat $\tM$ as a Markov chain and find its
 stationary probability. The Perron-Frobenius theorem says that $\tM$
 has a unique non-negative eigenvector (and therefore a unique PageRank
 vector) if and only if it is irreducible. But we are not necessarily
@@ -269,10 +270,12 @@ resolving Leimar and Hammerstein's complaint
 \cite{leimar_evolution_2001} that reputation dynamics do not properly
 incentivize players.
 \item
-Conversely, the effects of defecting against low-ranked individuals
-are minimized. Therefore, as mentioned above, generous individuals
-will not be unduly penalized for encountering a number of selfish
-individuals and refusing to cooperate.
+Conversely, the effects of selfishness against low-ranked individuals
+are minimized: low-reputation groups cannot unilaterally affect the
+PageRank graph by a large margin
+\cite{langville_deeper_2004}. Therefore, as mentioned above, generous
+individuals will not be unduly penalized for encountering a number of
+selfish individuals and refusing to cooperate.
 \end{enumerate}
 
 \subsection{Interactions per round}
