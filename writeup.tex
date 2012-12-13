@@ -180,7 +180,9 @@ Each round comprises the following steps:
 graph with some $M_{ij} = 1$ representing an edge from $j$ to $i$---in
 other words $j$ has endorsed $i$. Noting an analogy between these
 endorsements and links between web pages, we run the standard page
-rank algorithm on this graph.
+rank algorithm on this graph. (See section \ref{sec:whypagerank} for
+an explanation of why this is a realistic algorithm for individuals to
+employ.)
 
 Given a matrix $M$, we compute the PageRank as follows. Let $\tM$ be
 the column-normalization of $M$, so that $\tM_i = \frac{M_i}{\sum_j
@@ -237,7 +239,9 @@ of social situations. For example, someone who just does $1$ step
 would measure reputation as the total number of donations a player
 gave replicating Nowak and Sigmund's original model. The $n_i$ are
 initialized randomly, are inherited, and mutate with some probability
-$\mu_n$. There is a fitness cost $p n_i$ to each player $i$.
+$\mu_n$. There is a fitness cost $p n_i$ to each player $i$,
+reflecting the evolutionary disadvantage from devoting more resources
+to social computation.
 \item
 When an $M_{ij}$ entry is updated a weighted average with some weight
 $m$ is taken with the new value and the old value representing some
@@ -248,12 +252,27 @@ memory of past interactions.
 \label{sec:analysis}
 
 \subsection{Use of PageRank}
+\label{sec:whypagerank}
 
 The PageRank algorithm is frequently used to calculate reputation in
 social networks \cite{pujol_extracting_2002}. There are a few features
 of PageRank that make it desirable for our simulation:
 \begin{enumerate}
-\item blablabla
+\item
+The opinions of more generous players matter more. This is because
+more generous players have more endorsements pointing to them, and
+thus better reputation; therefore an endorsement from a high-raking
+individual confers more reputation on the receiver than a reputation
+from a lower individual. For this reason, optimal strategies must take
+into account the receiver's reputation as well as the donor's,
+resolving Leimar and Hammerstein's complaint
+\cite{leimar_evolution_2001} that reputation dynamics do not properly
+incentivize players.
+\item
+Conversely, the effects of defecting against low-ranked individuals
+are minimized. Therefore, as mentioned above, generous individuals
+will not be unduly penalized for encountering a number of selfish
+individuals and refusing to cooperate.
 \end{enumerate}
 
 \subsection{Interactions per round}
