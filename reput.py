@@ -29,7 +29,9 @@ STEPS = 10000
 # console width
 WIDTH = 80
 # how often to print progress
-DUMP = STEPS/WIDTH
+PROG = STEPS/WIDTH
+# how often to snapshot all data
+DUMP = 100
 # number of threads
 PROC = 4
 #number of simulations per thread
@@ -152,28 +154,29 @@ def run_on_proc(q, pr):
         arp = np.zeros(STEPS)
         ain = np.zeros(STEPS)
         aft = np.zeros(STEPS)
-        pst = np.zeros((STEPS,N))
-        prp = np.zeros((STEPS,N))
-        pin = np.zeros((STEPS,N))
-        pft = np.zeros((STEPS,N))
+        pst = np.zeros((STEPS/DUMP,N))
+        prp = np.zeros((STEPS/DUMP,N))
+        pin = np.zeros((STEPS/DUMP,N))
+        pft = np.zeros((STEPS/DUMP,N))
         for t in xrange(STEPS):
-            if t % DUMP == 0:
-                q.put((pr, 'step', t + i*STEPS))
+            if t % PROG == 0:
+                q.put((pr, 'step', t + i*STEPS))                
             rep = pagerank(opi) * opi.sum() / (N-1)
             ast[t] = np.mean(stg)
-            pst[t] = stg.copy()
             if MU_IND == 0:
                 arp[t] = np.mean(rep[ITER])
-                prp[t] = rep[ITER].copy()
             else:
                 arp[t] = np.mean(rep)
                 # prp not defined in this case yet
             ain[t] = np.mean(ind)
-            pin[t] = ind.copy()
             fit, opi = interact(fit, opi, rep, stg, ind)
             fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
             aft[t] = np.mean(fit)
-            pft[t] = fit.copy()
+            if t % DUMP == 0:
+                pst[t/DUMP] = stg.copy()
+                prp[t/DUMP] = rep[ITER].copy()
+                pin[t/DUMP] = ind.copy()
+                pft[t/DUMP] = fit.copy()
             fit = np.ones(N)
         q.put((pr, 'return', {'fit':fit, 'stg':stg, 'ind':ind,
                               'rep':rep, 'ast':ast, 'arp':arp,
@@ -217,7 +220,8 @@ def run():
             wipe = "\b" * len(prog)
             sys.stdout.flush()
     #arrs.update(avg_trials(arrs))
-    arrs['params'] = dict((k,v) for k, v in globals().iteritems() if k.upper() == k)
+    arrs['params'] = dict((k,v) for k, v in globals().iteritems() 
+                          if k.upper() == k)
     return arrs
 
 if __name__ == "__main__":
@@ -234,7 +238,6 @@ if __name__ == "__main__":
     if not fname.endswith('.out'):
         fname = fname + '.out'
     result = run()
-    avgs = avg_trials(result)
     with open(fname, 'w') as out:
         cPickle.dump(result, out)
     print
