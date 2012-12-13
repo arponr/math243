@@ -17,8 +17,7 @@ if __name__ == "__main__":
             data = cPickle.load(f)
             params = data['params']
             snaps = int(params['STEPS'] / params['DUMP'])
-            PROC = params['PROC']
-            SIM = params['SIM'] 
+            trials = params['PROC'] * params['SIM'] 
             N = params['N']
             for k in xrange(snaps):
                 if i == 0:
@@ -28,14 +27,17 @@ if __name__ == "__main__":
                     stg_y.append([])
                     rep_y.append([])
                     fit_y.append([])
-                stg_x[k].extend([i] * PROC * SIM * N)
-                rep_x[k].extend([i] * PROC * SIM * N)
-                fit_x[k].extend([i] * PROC * SIM * N)
-                for j in xrange(PROC * SIM):
+                stg_x[k].extend([i] * trials * N)
+                rep_x[k].extend([i] * trials * N)
+                fit_x[k].extend([i] * trials * N)
+                for j in xrange(trials):
                     stg_y[k].extend(data['pst'][j][k])
                     rep_y[k].extend(data['prp'][j][k])
                     fit_y[k].extend(data['pft'][j][k])
     for k in xrange(snaps):
         plt.figure()
-        plt.plot(stg_x[k], stg_y[k], 'ro', alpha=0.5)
+        heat, xed, yed = np.histogram2d(rep_y[k], rep_x[k],
+                                        bins=(50,4))
+        ext = [yed[0], yed[-1], xed[-1], xed[0]]
+        plt.imshow(heat, extent=ext, interpolation='nearest')
     plt.show()
