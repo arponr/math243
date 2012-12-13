@@ -6,3 +6,5 @@ do
     python reput.py data$MEETS MEETS=$MEETS STEPS=25000 DUMP=2500 C=1\
     B=2 N=100 PROC=4 SIM=16 
 done
+
+python morepics.py data '[10, 20, 50, 100]'
