@@ -1,5 +1,5 @@
 \documentclass{amsart}
-\title{Simulating Evolutionary Reputation using PageRank}
+\title{Simulating Evolution of Indirect Reciprocity with Reputation using PageRank}
 \author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
 \date{\today}
 \usepackage{enumitem}
@@ -8,6 +8,7 @@
 \newcommand{\ri}{\right}
 \newcommand{\eps}{\epsilon}
 \newcommand{\om}{\omega}
+\hyphenation{PageRank}
 
 \begin{document}
 
@@ -170,7 +171,8 @@ Each round comprises the following steps:
 \item Set entries of $M$ according to the results of the interactions.
 \item Choose a player to die at random and one to reproduce
   proportional to fitness. Replace the dead player with a copy of the
-  reproducing one (inheriting the appropriate row and column of $M$).
+  reproducing one (inheriting the appropriate row and column of $M$,
+  but ensuring that the diagonal is always set to 0).
 \item With probability $\mu$, the strategy of the new player resets
   randomly as in the initialization phase.
 \end{enumerate}
@@ -233,6 +235,9 @@ of what it wants to in an interaction
 \item
 There is a small probability $\beta$ that after a donation, the
 corresponding entry of $M$ is not updated.
+\item
+When an individual reproduces, all players' opinions of the offspring
+are set to 0.
 \item
 Each player computes a different number of steps $n_i$ of the PageRank
 iterated multiplication representing different capacities for analysis
@@ -303,6 +308,29 @@ to minimize the effects of our model proxying direct reciprocity.
 
 \section{Conclusion}
 \label{sec:conclusion}
+
+\section{Further directions}
+
+\subsection{Analytic results}
+
+Because of the nontrivial way in which past interactions affect the
+current round, analytic results on this model are rather
+difficult. However, mathematical bounds on PageRank obtained by
+Bianchini et al. \cite{bianchini_Inside_2005} and Langville et
+al. \cite{langville_deeper_2004} suggest that some theoretical results
+may be possible.
+
+\subsection{Computational constraints}
+
+In reality, it is not free to compute a PageRank matrix with arbitrary
+precision. It would be interesting to see if limiting the precision to
+which the vector was calculated has any effect on how quickly or how
+often cooperative strategies fixate in the population. In fact, this
+could even be an additional feature subject to evolution and
+mutation. With appropriate fitness costs for more precise calculation,
+one might even be able to obtain theoretical validation for Dunbar's
+number, the number of individuals beyond which social groups start to
+break down \cite{dunbar_neocortex_1995}.
 
 \bibliographystyle{plain} \bibliography{refs}
 
