@@ -71,8 +71,9 @@ give a reputation score to each individual based on the matrix of
 pairwise opinions of each individual about each other. These opinions
 are based on the most recent interaction between the two. We give a
 stochastic model for the evolutionary dynamics of a population
-undergoing reputation interactions and give some arguments as to why
-this model is realistic and avoids the problems mentioned above.
+undergoing reputation interactions using such scoring, and give some
+arguments as to why this model is realistic and avoids the problems
+mentioned above.
 
 Using this model, we show that indirect reciprocity can emerge in
 large populations with a much lower benefit/cost ratio than previously
@@ -548,7 +549,6 @@ may be possible.
 We considered, but did not implement, a few other modifications to our
 model:
 \begin{description}
-%please add or remove as necessary
 \item[Errors] There is a small probability $\alpha$ that a player does
   the opposite of what it wants to in an interaction.
 \item[Blank slate] When an individual reproduces, all players'
@@ -559,9 +559,17 @@ model:
   representing some memory of past interactions.
 \end{description}
 
+\subsection{Third-order strategies}
+
+Currently, the strategies that we consider only involve the
+recipient's reputation. Nowak and Sigmund \cite{nowak_evolution_1998}
+found that if donors were allowed to consider their own reputation as
+well, cooperation evolved much faster. Our model could be extended
+with such strategies as well.
+
 \subsection{Constrained computation}
 
-In reality, it is not free to compute a PageRank matrix with arbitrary
+In reality, it is not free to compute a PageRank vector with arbitrary
 precision. It would be interesting to see if limiting the precision to
 which the vector was calculated has any effect on how quickly or how
 often cooperative strategies fixate in the population. In fact, this
