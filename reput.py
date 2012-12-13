@@ -15,9 +15,9 @@ ALPHA = 0.85
 # interaction cost
 C = 1
 # interaction benefit
-B = 20
+B = 2
 # number of interactions per round
-MEETS = 500
+MEETS = 100
 # mutation probability for strategy
 MU_STG = .0001
 # mutation probability for pagerank-iterations
@@ -25,7 +25,7 @@ MU_IND = 0 #MU_IND = .0001
 # population size
 N = 100
 # number of rounds
-STEPS = 2000000
+STEPS = 20000
 # console width
 WIDTH = 80
 # how often to print progress
@@ -35,9 +35,9 @@ DUMP = STEPS
 # number of threads
 PROC = 4
 #number of simulations per thread
-SIM = 1
+SIM = 4
 # reset everyone's opinions of offspring
-DIE_RESET = True
+DIE_RESET = False
 # error rate in actions
 ERR = 0.
 # chance for an action to be heard about

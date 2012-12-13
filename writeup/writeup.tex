@@ -3,7 +3,7 @@
   Evolution of Indirect Reciprocity with Reputation using PageRank}  
 \author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
 \date{\today}
-\usepackage{enumitem}
+\usepackage{enumitem,graphicx}
 \usepackage[margin=1.75in]{geometry}
 
 \newcommand{\lf}{\left}
@@ -341,16 +341,49 @@ to minimize the effects of our model proxying direct reciprocity.
 \section{Results}
 \label{sec:results}
 
+\subsection{Dependence on iterations per round}
 
+\subsection{Dependence on population size}
 
 \subsection{Long-range behavior}
-Over hundreds of thousands of rounds the typical behavior (with $b=2$, $c = d = 0.05$, $N = I = 100$, $\omega = 0.1$, $\mu = 0.0001$) can be seen in the following runs
+\label{sec:longrange}
+Over hundreds of thousands of rounds the typical behavior (with $b=2$,
+$c = d = 0.05$, $N = I = 100$, $\omega = 0.1$, $\mu = 0.0001$) can be
+seen in figures \ref{fig:really} and \ref{fig:what} below.
 
-[insert appropriate picture]
+\begin{figure}[h]
+\caption{$10^6$ rounds with the parameters listed in section
+  \ref{sec:longrange}. Green trend lines are average reputation, blue
+  are average strategy, and red are average fitness. Observe that in
+  the first two runs, cooperation emerges even after a selfish
+  strategy has fixated.}
 
-This replicates Sigmund and Nowak's result. With each step taking many hundred thousand time intervals, cooperation fixates after a critical mass of cooperators kickstarts an increase in reputations, average strategy falls below zero as everyone becomes an unconditional cooperator by random drift, and finally unconditional defectors invade and take over  starting the cycle again. As is often seen for invasions by new types in models like this, many of the transitions can fail the first times they start to occur. 
+\includegraphics[width=\textwidth]{really.png}
+\label{fig:really}
+\end{figure}
+\begin{figure}[h]
+\caption{$2 \times 10^6$ rounds with the parameters listed in section
+  \ref{sec:longrange}. Note how in the first run, cooperation is
+  invaded by a high-threshold, selfish strategy.}
 
-The first step is dependent on there being unconditional cooperators and the last on there being unconditional defectors.
+\includegraphics[width=\textwidth]{what.png}
+\label{fig:what}
+\end{figure}
+
+
+This replicates Sigmund and Nowak's result
+\cite{nowak_evolution_1998}, although with a much lower benefit/cost
+ratio than used in that model. With each step taking many hundred
+thousand time intervals, cooperation fixates after a critical mass of
+cooperators kickstarts an increase in reputations, average strategy
+falls below zero as everyone becomes an unconditional cooperator by
+random drift, and finally unconditional defectors invade and take over
+starting the cycle again. As is often seen for invasions by new types
+in models like this, many of the transitions can fail the first times
+they start to occur.
+
+The first step is dependent on there being unconditional cooperators
+and the last on there being unconditional defectors.
 
 
 \section{Conclusion}
