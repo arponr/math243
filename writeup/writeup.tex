@@ -3,7 +3,7 @@
   Evolution of Indirect Reciprocity with Reputation using PageRank}  
 \author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
 \date{\today}
-\usepackage{enumitem,graphicx}
+\usepackage{enumitem, graphicx, subcaption}
 %\usepackage[margin=1.75in]{geometry}
 
 \newcommand{\lf}{\left}
@@ -346,44 +346,42 @@ to minimize the effects of our model proxying direct reciprocity.
 
 For each of the population sizes $N \in \{10,20,50,100\}$, increasing
 the number of iterations per round increases the probability that
-cooperation will fixate, as shown in figures
-\ref{fig:pop10iter}--\ref{fig:pop100iter} (with $b=5, \om=0.1,$ and
-$I$ ranging over $10,20,50,100,200,500$, excluding values greater than
-$I^2$). This is expected, as a larger number of interactions per round
-means that the opinion matrix more closely reflects the current
-strategy distribution, and thus a player's reputation is a better
-indicator of their current strategy.
+cooperation will fixate, as shown in figures \ref{fig:varyiter} (with
+$b=5, \om=0.1,$ and $I$ ranging over $10,20,50,100,200,500$, excluding
+values greater than $I^2$). This is expected, as a larger number of
+interactions per round means that the opinion matrix more closely
+reflects the current strategy distribution, and thus a player's
+reputation is a better indicator of their current strategy.
 
-\begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after
-  25,000 rounds with $N=10$ and $I \in \{10,20,50\}$.}
+\begin{figure}[h!tbp]
+  \begin{subfigure}{.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{pop10iter.png}
+    \caption{A histogram of proportion of cooperations per round after
+      25,000 rounds with $N=10$ and $I \in \{10,20,50\}$.}
+  \end{subfigure}
+  \hspace{.02\linewidth}
+  \begin{subfigure}{.48\linewidth}  
+    \centering
+    \includegraphics[width=\linewidth]{pop20iter.png}
+    \caption{A histogram of proportion of cooperations per round after
+      25,000 rounds with $N=20$ and $I \in \{10,20,50,100,200\}$.}
+  \end{subfigure}
 
-\includegraphics[width=\textwidth]{pop10iter.png}
-\label{fig:pop10iter}
-\end{figure}
-
-\begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after
-  25,000 rounds with $N=20$ and $I \in \{10,20,50,100,200\}$.}
-
-\includegraphics[width=\textwidth]{pop20iter.png}
-\label{fig:pop20iter}
-\end{figure}
-
-\begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after
-  25,000 rounds with $N=50$ and $I \in \{10,20,50,100,200,500\}$.}
-
-\includegraphics[width=\textwidth]{pop50iter.png}
-\label{fig:pop50iter}
-\end{figure}
-
-\begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after
-  25,000 rounds with $N=100$ and $I \in \{10,20,50,100,200,500\}$.}
-
-\includegraphics[width=\textwidth]{pop100iter.png}
-\label{fig:pop100iter}
+  \begin{subfigure}{.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{pop50iter.png}
+    \caption{A histogram of proportion of cooperations per round after
+      25,000 rounds with $N=50$ and $I \in \{10,20,50,100,200,500\}$.}
+  \end{subfigure}
+  \hspace{.02\linewidth}
+  \begin{subfigure}{.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{pop100iter.png}
+    \caption{A histogram of proportion of cooperations per round after
+      25,000 rounds with $N=100$ and $I \in \{10,20,50,100,200,500\}$.}
+  \end{subfigure}
+  \label{fig:varyiter}
 \end{figure}
 
 \subsection{Dependence on population size}
@@ -410,7 +408,7 @@ seen in figures \ref{fig:really} and \ref{fig:what} below.
   the first two runs, cooperation emerges even after a selfish
   strategy has fixated.}
 
-\includegraphics[width=\textwidth]{really.png}
+\includegraphics[width=\linewidth]{really.png}
 \label{fig:really}
 \end{figure}
 \begin{figure}[h]
@@ -418,7 +416,7 @@ seen in figures \ref{fig:really} and \ref{fig:what} below.
   \ref{sec:longrange}. Note how in the first run, cooperation is
   invaded by a high-threshold, selfish strategy.}
 
-\includegraphics[width=\textwidth]{what.png}
+\includegraphics[width=\linewidth]{what.png}
 \label{fig:what}
 \end{figure}
 
