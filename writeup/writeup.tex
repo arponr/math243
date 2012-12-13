@@ -393,6 +393,7 @@ their current cooperativeness, as shown in Figures
 \end{figure}
 
 \subsection{Dependence on population size}
+\label{sec:pop_size}
 
 In an extremely counter-intuitive twist, we found that larger
 populations had a \emph{higher} probability of fixating at cooperation
@@ -493,9 +494,41 @@ all-or-nothing incomplete information \cite{nowak_five_2006}.
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have developed a model for reputation dynamics that is robust
+We have developed a model for reputation dynamics with the following
+benefits:
+
+\begin{itemize}
+\item properly aligned incentives (optimal strategies consider the
+  recipient's reputation);
+\item no bad penalties (e.g. against generous individuals not donating
+  to selfish ones);
+\item robust to incomplete information;
+\item a rich reputation scale (not just ``good'' and ``bad'' or a few
+  integers);
+\item a well-motivated algorithmic mechanism.
+\end{itemize}
+
+This model achieves evolution of indirect reciprocity in many
+realistic scenarios, including much more realistic benefit/cost ratios
+than previously observed. Furthermore, it is robust to limited
+information and shows the same ``cycling'' behavior observed in other
+models at large timescales \cite{nowak_evolution_1998}.
+
+Obviously there are many more variables in this model than we had time
+or computational power to analyze. It certainly merits further
+investigation to determine its full behavior, extend it, and find all
+the connections between various parameters, and there are still some
+unknowns (such as the strange sublinear dependence on population size
+detailed in section \ref{sec:pop_size}). We include some ideas for
+further work below.
 
 \section{Further directions}
+
+\subsection{More data}
+
+The model we created is highly stochastic and we did not have
+sufficient time or computational power to run as many simulations as
+we would have liked, given the number of parameters and variants.
 
 \subsection{Analytic results}
 
