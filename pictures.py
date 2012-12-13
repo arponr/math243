@@ -24,11 +24,11 @@ if __name__ == "__main__":
     plt.figure()
     for i in xrange(n):
         plt.subplot(w,h,i)
-        plt.plot(results['ast'][i], label='avg. coop threshold')
-        plt.plot(results['arp'][i], label='avg. reputation')
-        #plt.plot(results['cps'][i] / results['params'][i]['MEETS'], label='num. cooperations')
+        plt.plot(results['ast'][i], 'b', label='avg. coop threshold')
+        plt.plot(results['cps'][i] / results['params'][i]['MEETS'], 'r', label='num. cooperations')
+        plt.plot(results['arp'][i], 'g', label='avg. reputation')
         #plt.plot(results['aft'][i], label='avg. fitness')
         plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
     plt.savefig(outname + '.png',dpi=300)
-    #plt.show()
+    plt.show()
 

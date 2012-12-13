@@ -76,14 +76,12 @@ Using this model, we show that indirect reciprocity can emerge in
 large populations with a much lower benefit/cost ratio than previously
 shown. We show that altruism can spontaneously emerge and fixate even
 in large populations of reasonably selfish individuals. We also show
-that, if there is some probability $p < 1$ that an interaction is
-recorded, Nowak's rule $p > \f{b}{c}$ relating $p$ to the cost/benefit
-ratio holds. Finally, we obtain the counterintuitive result that with
-some reasonable parameter values, the probability of cooperation
-fixating actually increases for larger populations.
-%TODO or does not hold
-
-%TODO based on experimental results
+that our model is quite robust: even in the presence of significantly
+reduced information (high probability that interactions are not
+recorded), cooperation can still emerge. Finally, we obtain the
+counterintuitive result that with some reasonable parameter values,
+the probability of cooperation fixating actually increases for larger
+populations.
 
 The remainder of the paper is as follows: in section
 \ref{sec:related}, we go over previous work and explain our novel
@@ -265,39 +263,24 @@ strategy of player $i$: cooperation occurs if and only if $s_i <
 r_j$. If cooperation occurs, $M_{ij}$ is set to 1, otherwise
 $M_{ij}$ is set to $0$.
 
-\subsection{Modifications}
-We tested a few modifications of the original model
-\begin{enumerate}
-%please add or remove as necessary
-\item
-There is a small probability $\alpha$ that a player does the opposite
-of what it wants to in an interaction
-\item
-There is a small probability $\beta$ that after a donation, the
-corresponding entry of $M$ is not updated.
-\item
-When an individual reproduces, all players' opinions of the offspring
-are set to 0.
-\item
-Each player computes a different number of steps $n_i$ of the PageRank
-iterated multiplication representing different capacities for analysis
-of social situations. For example, someone who just does $1$ step
-would measure reputation as the total number of donations a player
-gave replicating Nowak and Sigmund's original model. The $n_i$ are
-initialized randomly, are inherited, and mutate with some probability
-$\mu_n$. There is a fitness cost $p n_i$ to each player $i$,
-reflecting the evolutionary disadvantage from devoting more resources
-to social computation.
-\item
-When an $M_{ij}$ entry is updated a weighted average with some weight
-$m$ is taken with the new value and the old value representing some
-memory of past interactions.
-\end{enumerate}
+We also tested one variant to the interaction protocol, which gives
+limited information to the opinion matrix: $M_{ij}$ is changed only
+with probability $p$, otherwise it is left at its previous value.
+
+\subsection{Strategy choice}
+Strategies were chosen uniformly at random from $[0,1]$, except that
+with probability $c$ the strategy was ``always donate'' and with
+probability $d$ the strategy was ``never donate.'' Since the opinion
+matrix starts with all zeros, the reputation vector starts out at all
+zero, so there is no way to seed cooperation without some
+unconditional cooperators. In all our tests, we used $c=d=0.05$.
 
 \section{Analysis of model}
 \label{sec:analysis}
 \subsection{Donation Game}
-As with the model of Nowak and Sigmund, we use the one-shot donation game to remove all effects of direct reciprocity and focus only on the indirect. 
+As with the model of Nowak and Sigmund \cite{nowak_evolution_1998}, we
+use the one-shot donation game to remove all effects of direct
+reciprocity and focus only on the indirect.
 
 \subsection{Use of PageRank}
 \label{sec:whypagerank}
@@ -349,17 +332,19 @@ to minimize the effects of our model proxying direct reciprocity.
 \section{Results}
 \label{sec:results}
 
-\subsection{Dependence on iterations per round}
+\subsection{Dependence on interactions per round}
 
 For each of the population sizes $N \in \{10,20,50,100\}$, increasing
-the number of iterations per round increases the probability that
+the number of interactions per round increases the probability that
 cooperation will fixate, as shown in figures
 \ref{fig:pop10iter}--\ref{fig:pop100iter} (with $b=5, \om=0.1,$ and
 $I$ ranging over $10,20,50,100,200,500$, excluding values greater than
-$I^2$). This is expected, as a larger number of interactions per round
-means that the opinion matrix more closely reflects the current
-strategy distribution, and thus a player's reputation is a better
-indicator of their current strategy.
+$I^2$). This is expected: a larger number of interactions per round
+increases the potential effects of proxying direct reciprocity (see
+section \ref{sec:inter_per_round}). It also means that the opinion
+matrix more closely reflects the current strategy distribution, and
+thus a player's reputation is a better indicator of their current
+cooperativeness, as shown in figure \ref{fig:lag}.
 
 \begin{figure}[h]
 \caption{A histogram of proportion of cooperations per round after 64
@@ -394,6 +379,19 @@ indicator of their current strategy.
 
 \includegraphics[width=\textwidth]{pop100iter.png}
 \label{fig:pop100iter}
+\end{figure}
+
+\begin{figure}[h]
+\caption{A comparison of average number of cooperations (red) and
+  average reputation (green) for 50 (top) and 500 (bottom)
+  interactions per round, with $b=5,N=100$ over 1000 steps. It is
+  apparent that the when the number of interactions higher, average
+  reputation tracks current average cooperativeness much more
+  closely.}
+
+\includegraphics[width=\textwidth]{lag50.png}
+\includegraphics[width=\textwidth]{lag500.png}
+\label{fig:lag}
 \end{figure}
 
 \subsection{Dependence on population size}
@@ -432,7 +430,6 @@ seen in figures \ref{fig:really} and \ref{fig:what} below.
 \label{fig:what}
 \end{figure}
 
-
 This replicates Sigmund and Nowak's result
 \cite{nowak_evolution_1998}, although with a much lower benefit/cost
 ratio than used in that model. With each step taking many hundred
@@ -462,17 +459,42 @@ Bianchini et al. \cite{bianchini_Inside_2005} and Langville et
 al. \cite{langville_deeper_2004} suggest that some theoretical results
 may be possible.
 
-\subsection{Computational constraints}
+\subsection{Potential modifications}
+
+We considered, but did not implement, a few other modifications to our
+model:
+\begin{description}
+%please add or remove as necessary
+\item[Errors] There is a small probability $\alpha$ that a player does
+  the opposite of what it wants to in an interaction.
+\item[Blank slate] When an individual reproduces, all players'
+  opinions of the offspring, and the offspring's opinions of each
+  player, are reset (to 0, 1, random values or some default value).
+\item[Grudges] When an $M_{ij}$ entry is updated a weighted average
+  with some weight $m$ is taken with the new value and the old value
+  representing some memory of past interactions.
+\end{description}
+
+\subsection{Constrained computation}
 
 In reality, it is not free to compute a PageRank matrix with arbitrary
 precision. It would be interesting to see if limiting the precision to
 which the vector was calculated has any effect on how quickly or how
 often cooperative strategies fixate in the population. In fact, this
-could even be an additional feature subject to evolution and
-mutation. With appropriate fitness costs for more precise calculation,
-one might even be able to obtain theoretical validation for Dunbar's
-number, the number of individuals beyond which social groups start to
-break down \cite{dunbar_neocortex_1995}.
+could even be an additional feature subject to evolution and mutation.
+
+\subsection{Limited knowledge}
+
+For an individual to hold the entire opinion matrix in memory costs an
+amount of memory quadratic in the number of individuals in the
+population. It might be realistic to require that individuals only
+know some minor of the full opinion matrix, with fitness costs
+associated with knowing more of the matrix. If there are diminishing
+returns to knowing more of the matrix, then there will be some
+evolutionary equilibrium where fitness is maximized. With appropriate
+fitness costs, one might even be able to obtain theoretical validation
+for Dunbar's number, the number of individuals beyond which social
+groups start to break down \cite{dunbar_neocortex_1995}.
 
 \bibliographystyle{plain} \bibliography{refs}
 
