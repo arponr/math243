@@ -10,6 +10,7 @@
 \newcommand{\ri}{\right}
 \newcommand{\eps}{\epsilon}
 \newcommand{\om}{\omega}
+\newcommand{\f}[2]{\frac{#1}{#2}}
 \hyphenation{PageRank}
 
 \begin{document}
@@ -70,12 +71,18 @@ are based on the most recent interaction between the two. We give a
 stochastic model for the evolutionary dynamics of a population
 undergoing reputation interactions and give some arguments as to why
 this model is realistic and avoids the problems mentioned above.
-%TODO
 
 Using this model, we show that indirect reciprocity can emerge in
 large populations with a much lower benefit/cost ratio than previously
 shown. We show that altruism can spontaneously emerge and fixate even
-in large populations of reasonably selfish individuals.
+in large populations of reasonably selfish individuals. We also show
+that, if there is some probability $p < 1$ that an interaction is
+recorded, Nowak's rule $p > \f{b}{c}$ relating $p$ to the cost/benefit
+ratio holds. Finally, we obtain the counterintuitive result that with
+some reasonable parameter values, the probability of cooperation
+fixating actually increases for larger populations.
+%TODO or does not hold
+
 %TODO based on experimental results
 
 The remainder of the paper is as follows: in section
@@ -355,32 +362,35 @@ strategy distribution, and thus a player's reputation is a better
 indicator of their current strategy.
 
 \begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after
-  25,000 rounds with $N=10$ and $I \in \{10,20,50\}$.}
+\caption{A histogram of proportion of cooperations per round after 64
+  trials of 25,000 rounds with $N=10$ and $I \in \{10,20,50\}$.}
 
 \includegraphics[width=\textwidth]{pop10iter.png}
 \label{fig:pop10iter}
 \end{figure}
 
 \begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after
-  25,000 rounds with $N=20$ and $I \in \{10,20,50,100,200\}$.}
+\caption{A histogram of proportion of cooperations per round after 64
+  trials of 25,000 rounds with $N=20$ and $I \in
+  \{10,20,50,100,200\}$.}
 
 \includegraphics[width=\textwidth]{pop20iter.png}
 \label{fig:pop20iter}
 \end{figure}
 
 \begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after
-  25,000 rounds with $N=50$ and $I \in \{10,20,50,100,200,500\}$.}
+\caption{A histogram of proportion of cooperations per round after 64
+  trials of 25,000 rounds with $N=50$ and $I \in
+  \{10,20,50,100,200,500\}$.}
 
 \includegraphics[width=\textwidth]{pop50iter.png}
 \label{fig:pop50iter}
 \end{figure}
 
 \begin{figure}[h]
-\caption{A histogram of proportion of cooperations per round after
-  25,000 rounds with $N=100$ and $I \in \{10,20,50,100,200,500\}$.}
+\caption{A histogram of proportion of cooperations per round after 64
+  trials of 25,000 rounds with $N=100$ and $I \in
+  \{10,20,50,100,200,500\}$.}
 
 \includegraphics[width=\textwidth]{pop100iter.png}
 \label{fig:pop100iter}
@@ -394,7 +404,7 @@ with $I=N$. This implies that the number of interactions per round
 required to have a probability $p$ of cooperation fixating grows
 significantly \emph{sublinearly} with increasing population size
 rather than linearly as our argument in section
-\ref{sec:inter_per_round} suggests. We were unable to determine why
+\ref{sec:inter_per_round} might suggest. We were unable to determine why
 this surprising result holds and admit extreme bafflement.
 
 \subsection{Long-range behavior}
