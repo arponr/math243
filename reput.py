@@ -92,6 +92,7 @@ def interact(fit, opi, rep, stg, ind):
         sands = nprand.rand(m)
     else:
         sands = np.zeros(m)
+    coops = np.zeros(1)
     code = r'''
 #line 84 "reput.c"
 int don, rec;
@@ -107,6 +108,7 @@ for (int t = 0; t < m; t++) {
         newval = (sands(t) < GOS) ? 1 : opi(don, rec);
         fit(don) -= C * SEL;
         fit(rec) += B * SEL;
+        coops(0) += 1;
     }
     if (MEMORY) {
         opi(don, rec) = (opi(don, rec) + newval/2) / 2;
@@ -117,9 +119,9 @@ for (int t = 0; t < m; t++) {
 }
 '''
     weave.inline(code, ['m', 'dons', 'recs', 'MEMORY', 'ERR', 'rands', 'sands',
-                        'stg', 'fit', 'opi', 'B', 'C', 'SEL', 'GOS', 'rep', 'ind'],
+                        'stg', 'fit', 'opi', 'B', 'C', 'SEL', 'GOS', 'rep', 'ind', 'coops'],
                  type_converters=weave.converters.blitz)
-    return fit, opi
+    return fit, opi, coops[0]
     
 def evolve(fit, opi, rep, stg, ind):
     pro = wrand(fit)
@@ -159,6 +161,7 @@ def run_on_proc(q, pr):
         prp = np.zeros((STEPS/DUMP,N))
         pin = np.zeros((STEPS/DUMP,N))
         pft = np.zeros((STEPS/DUMP,N))
+        cps = np.zeros(STEPS)
         for t in xrange(STEPS):
             if t % PROG == 0:
                 q.put((pr, 'step', t + i*STEPS))                
@@ -170,7 +173,8 @@ def run_on_proc(q, pr):
                 arp[t] = np.mean(rep)
                 # prp not defined in this case yet
             ain[t] = np.mean(ind)
-            fit, opi = interact(fit, opi, rep, stg, ind)
+            fit, opi, coops = interact(fit, opi, rep, stg, ind)
+            cps[t] = coops
             fit, opi, rep, stg = evolve(fit, opi, rep, stg, ind)
             aft[t] = np.mean(fit)
             if t % DUMP == 0:
@@ -182,7 +186,8 @@ def run_on_proc(q, pr):
         q.put((pr, 'return', {'fit':fit, 'stg':stg, 'ind':ind,
                               'rep':rep, 'ast':ast, 'arp':arp,
                               'ain':ain, 'aft':aft, 'pst':pst,
-                              'prp':prp, 'pin':pin, 'pft':pft})) 
+                              'prp':prp, 'pin':pin, 'pft':pft,
+                              'cps':cps})) 
         
 def avg_trials(arrs):
     avgs = {}

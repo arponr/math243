@@ -13,6 +13,8 @@ if __name__ == "__main__":
         with open(fname + '.out') as f:
             obj = cPickle.load(f)
             for (k, v) in obj.iteritems():
+                if k == 'params':
+                    v = [v] * v['PROC'] * v['SIM']
                 if not k in results:
                     results[k] = []
                 results[k].extend(v)
@@ -24,6 +26,7 @@ if __name__ == "__main__":
         plt.subplot(w,h,i)
         plt.plot(results['ast'][i], label='avg. coop threshold')
         plt.plot(results['arp'][i], label='avg. reputation')
+        plt.plot(results['cps'][i] / results['params'][i]['MEETS'], label='num. cooperations')
         #plt.plot(results['aft'][i], label='avg. fitness')
         plt.legend(prop={'size':3})
     plt.savefig(outname + '.png',dpi=300)
