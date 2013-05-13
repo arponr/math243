@@ -60,7 +60,8 @@ def wrand(weight):
             return i
 
 def normalise(A):
-    return A / np.maximum(A.sum(0), 1)
+    B = A / np.maximum(A.sum(0), 1)
+    return B + (1 - B.sum(0)) / len(B)
 
 def pagerank(A):
     B = normalise(A)
@@ -147,7 +148,7 @@ def evolve(fit, opi, rep, stg, ind):
 def run_on_proc(q, pr):
     for i in xrange(SIM):
         fit = np.ones(N)
-        opi = np.zeros((N,N), float)
+        opi = np.zeros((N, N))
         stg = strategy_from(nprand.rand(N))
         if MU_IND == 0:
             ind = np.ones(N, int) * ITER
@@ -165,7 +166,7 @@ def run_on_proc(q, pr):
         for t in xrange(STEPS):
             if t % PROG == 0:
                 q.put((pr, 'step', t + i*STEPS))                
-            rep = pagerank(opi) * opi.sum() / (N-1)
+            rep = np.minimum(1, pagerank(opi) * opi.sum() / (N-1))
             ast[t] = np.mean(stg)
             if MU_IND == 0:
                 arp[t] = np.mean(rep[ITER])
@@ -185,9 +186,10 @@ def run_on_proc(q, pr):
             fit = np.ones(N)
         q.put((pr, 'return', {'fit':fit, 'stg':stg, 'ind':ind,
                               'rep':rep, 'ast':ast, 'arp':arp,
-                              'ain':ain, 'aft':aft, 'pst':pst,
-                              'prp':prp, 'pin':pin, 'pft':pft,
-                              'cps':cps})) 
+                              'ain':ain, 'aft':aft, 'cps':cps}))
+                              #'pst':pst,
+                              #'prp':prp, 'pin':pin, 'pft':pft}
+                              #'cps':cps})) 
         
 def avg_trials(arrs):
     avgs = {}
@@ -243,6 +245,7 @@ if __name__ == "__main__":
     g.update(sets)
     if not fname.endswith('.out'):
         fname = fname + '.out'
+    print N, MEETS, ITER, SEL
     result = run()
     with open(fname, 'w') as out:
         cPickle.dump(result, out)

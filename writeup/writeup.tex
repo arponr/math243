@@ -1,43 +1,57 @@
 \documentclass{amsart}
-\title[Simulating indirect reciprocity using PageRank]{Simulating
-  Evolution of Indirect Reciprocity with Reputation using PageRank}  
-\author{Arpon Raksit \and Ben Kuhn \and Rahul Dalal}
-\date{\today}
-\usepackage{enumitem, graphicx, subcaption}
-\usepackage[lmargin=1.5in, tmargin=1.25in, 
-            rmargin=1.5in, bmargin=1.25in]{geometry}
+\usepackage{graphicx, subcaption}
+\usepackage{fancyhdr}
 \usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=black
+}
+
+\frenchspacing
+
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead{}
+\fancyfoot[C]{\ \\\small\thepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \setlength{\abovecaptionskip}{3pt}
 \setlength{\belowcaptionskip}{2pt}
 
-\newcommand{\lf}{\left}
-\newcommand{\ri}{\right}
-\newcommand{\eps}{\epsilon}
-\newcommand{\om}{\omega}
-\newcommand{\f}[2]{\frac{#1}{#2}}
-\hyphenation{PageRank}
+\renewcommand{\labelitemi}{---}
+\renewcommand{\labelitemii}{--}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title[Simulating indirect reciprocity using PageRank]{Simulating
+  Evolution of Indirect Reciprocity \\ with Reputation using PageRank}  
+\author{Arpon Raksit --- Math 243 --- \today}
 
 \begin{document}
 
 \begin{abstract}
-A key question in the study of evolutionary dynamics has been how
-indirect reciprocity might emerge: that is, how individuals might
-evolve a tendency to accept a personal fitness cost in exchange for a
-greater benefit to another individual, without the understanding that
-the recipient will later repay them. One proposed mechanism for this
-to occur is that donating to others enhances one's reputation, making
-third parties more likely to donate to the donator. We develop a novel
-model for determining reputation, adapted from the PageRank Web search
-algorithm, that allows individuals to differentiate between refusal to
-donate because the donor is selfish, and refusing to donate because
-the recipient is selfish. Thus donors will be penalized less for being
-paired against a number of selfish individuals. Using this model, we
-find that cooperation can emerge with much smaller benefit/cost ratios
+An interesting question in evolutionary dynamics is understanding how
+indirect reciprocity might emerge, that is, how individuals might
+evolve a tendency to accept a cost in exchange for another
+individual's benefit, without the understanding that the other will
+later repay them. A natural mechanism for evolving indirect
+reciprocity is a reputation system: donating to others enhances one's
+reputation, and one is more likely to donate to those with higher
+reputation. We develop a novel model for determining reputation,
+adapted from the PageRank Web search algorithm, which naturally values
+the opinions of selfish individuals less than generous individuals
+when calculating reputation. Using this model, we find that
+cooperation can emerge with much significantly benefit/cost ratios
 than previously observed.
 \end{abstract}
 
 \maketitle
+\thispagestyle{fancy}
 
 \section{Introduction}
 
@@ -90,17 +104,32 @@ counterintuitive result that with some reasonable parameter values,
 the probability of cooperation fixating actually increases for larger
 populations.
 
-The rest of the paper is organized as follows: in section
-\ref{sec:related}, we go over previous work and explain our novel
-contributions. In section \ref{sec:model}, we describe our model and
-explain our parameter choices; in section \ref{sec:analysis}, we
+The rest of the paper is organized as follows: in
+\S\ref{section-related}, we go over previous work and explain our
+novel contributions. In \S\ref{section-model}, we describe our model
+and explain our parameter choices; in \S\ref{section-analysis}, we
 motivate and justify some of our choices and give some analysis of our
-model. In section \ref{sec:results}, we describe and analyze the
-results of our simulations. Finally, in section \ref{sec:conclusion}
-we draw conclusions and in section \ref{sec:further} we suggest
-further avenues of research.
+model. In \S\ref{section-results}, we describe and analyze the results
+of our simulations. Finally, in \S\ref{section-conclusion} we draw
+conclusions and in \S\ref{section-further} we suggest further avenues
+of research.
 
-\section{Related Work}\label{sec:related}
+\subsection{Acknowledgements}
+
+Most of this model was developed last semester in collaboration with
+Ben Kuhn and Rahul Dalal. My work this semester is essentially in
+\begin{enumerate}
+\item correcting an error in our use of the PageRank algorithm;
+\item obtaining new and more data with this correction;
+\item explaining a result we found confusing, but finding another
+  confusing result.
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Related Work}
+\label{section-related}
 
 An initial model of indirect reciprocity was suggested by Boyd and
 Richerson \cite{boyd_evolution_1989}. In this model, individuals are
@@ -162,143 +191,154 @@ Furthermore, we allow for a richer scale of reputation than a binary
 good/bad rating, and our model can be extended in many ways to take
 into account more complex behavior.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Our model}
-\label{sec:model}
+\label{section-model}
+
+The model comprises a sequence of rounds in which a number of
+donor-receiver games are played.
 
 \subsection{Parameters}
+\label{subsection-parameters}
 
-The basic model comprises a series of rounds in which a number of
-donor-receiver games are played. We use the following parameters:
+Our model has the following parameters:
 
 \begin{itemize}
-\item $N$ is the size of the population to be tested.
-\item $I$ is the number of donor-receiver interactions per round.
-\item $b$ is the benefit-cost ratio (fitness benefit to recipient over
+\item $N \in \mathbb{N}$, population size;
+\item $I \in \mathbb{N}$, number of donor-receiver interactions per round.
+\item $b \in [1, \infty)$, benefit-to-cost ratio (relative fitness
+  benefit to recipient).
+\item $\omega \in (0, \infty)$, intensity of selection (magnitude of
   cost to donor).
-\item $\omega$ is the selection coefficient (magnitude of cost to
-  donor).
-\item $\mu$ is the strategy mutation probability.
-\item $c$ is the fraction of players that are unconditional.
-  cooperators
-\item $d$ is the fraction that are unconditional defectors.
+\item $\mu \in [0, 1]$, strategy mutation probability.
+\item $c \in [0, 1]$, probability (at initialisation or mutation) of individual
+  being unconditional cooperator;
+\item $d \in [0, 1-c]$, probability (at initialisation or mutation) of
+  individual being unconditional defector;
+\item $\alpha \in (0,1]$, a ``teleportation probability'' used in
+  computing PageRank (see \S\ref{subsection-pagerank});
+\item $\tau \in \mathbb{N}$, number of iterations used in computing
+  PageRank.
 \end{itemize}
 
 \subsection{State}
+\label{subsection-state}
 
-Our model has the following state variables:
-
+The state of our model at any time is characterised by the following
+objects: 
 \begin{itemize}
-\item $M \in \mathcal{M}_N(\{0,1\})$ is an $N \times N$ matrix
-  representing the opinions each individual has of the others;
-  $M_{ij}$ is 1 if player $i$ donated to $j$ the last time they had
-  the chance and 0 if $i$ was selfish. Initially, $M$ is the zero
-  matrix.
-\item $f \in [0, \infty)^N$ is a vector of fitnesses in the current
-  round; at the end of the round, individuals reproduce with
-  probability proportional to their fitness.
-\item $r \in [0,1]^N$ is a vector of reputations of individuals.
-\item $s \in [0,1]^N$ is a vector of strategies; player $i$ will
-  donate to any player $j$ with $r_j > s_i$ and keep the reward
-  against other players.
+\item $M = (M_{ij})$, an $N \times N$ binary matrix representing the
+  opinions each individual has of the others---$M_{ij} = 1$ if player
+  $i$ donated to $j$ the last time they had the chance, and $M_{ij} =
+  0$ if $i$ was selfish;
+\item $f \in [0, \infty)^N$, the fitness vector of the population;
+\item $r \in [0,1]^N$, the reputation vector of the population
+  (determined by $M$, as detailed below);
+\item $s \in [-c,1+d]^N$, the strategy vector of the population.
+\end{itemize}
+The initial state is given by
+\begin{itemize}
+\item $M_{ij} = 0$ for $1 \le i,j \le N$;
+\item $s_i$ uniformly at random from $[-c,1+d]$ for $1 \le i \le N$;
+\item $f_i = 1$ for $1 \le i \le n$.
 \end{itemize}
 
 \subsection{Round protocol}
-The simulation is initialized by giving each player a random strategy:
-unconditional cooperation with probability $c$, unconditional
-defection with probability $d$, and a uniform $s \in [0,1]$ with
-probability $1 - c- d$. $M$ is originally set to be $0$.
+\label{subsection-round}
 
-Each round comprises the following steps:
+Each round is comprised of the following steps:
 
 \begin{enumerate}
-\item Set all $f_i$ to 1.
-\item Compute $r_i$ according to the PageRank algorithm (see below).
-\item Determine the results of $I$ interactions (see below).
-\item Set entries of $f$ according to the results of the interactions.
-\item Set entries of $M$ according to the results of the interactions.
-\item Choose a player to die at random and one to reproduce
-  proportional to fitness. Replace the dead player with a copy of the
-  reproducing one (inheriting the appropriate row and column of $M$,
-  but ensuring that the diagonal is always set to 0).
-\item With probability $\mu$, the strategy of the new player resets
-  randomly as in the initialization phase.
+\item compute $r$ from $M$ according to the PageRank algorithm
+  (see \S\ref{subsection-pagerank}).
+\item execute $I$ interactions, where in each interaction we
+  (independently):
+  \begin{enumerate}
+  \item choose the ``donor'' $1 \le i \le N$ uniformly at random;
+  \item choose the ``receiver'' $1 \le j \le N, j \ne i$ uniformly at
+    random;
+  \item if $s_i < r_j$, ``cooperation'' occurs: $f_i$ decreases by
+    $\omega$, $f_j$ increases by $b\omega$, and $M_{ij}$ is set to
+    $1$.
+  \item else, ``defection'' occurs: $M_{ij}$ is set to $0$.
+  \end{enumerate}
+\item choose $1 \le u \le N$ to ``die'' uniformly at random;
+\item choose $1 \le v \le N$ to ``reproduce'' with probability
+  proportional to $f_v$.
+\item ``replace $u$ with the offspring of $v$'', that is:
+  \begin{enumerate}
+  \item for $1 \le i \le N$ let $M_{ui} = M_{vi}$ and $M_{iu} =
+    M_{iv}$, with the exception that we keep $M_{uu} = 0$;
+  \item let $f_u = f_v$;
+  \item with probability $\mu$, choose $s_u$ uniformly randomly as in
+    the initial state, and with probability $1-\mu$ let $s_u = s_v$.
+  \end{enumerate}
 \end{enumerate}
 
 \subsection{PageRank}
-\newcommand{\tM}{\tilde M} We think of the matrix $M$ as a directed
-graph with some $M_{ij} = 1$ representing an edge from $j$ to $i$---in
-other words $j$ has endorsed $i$. Noting an analogy between these
+\label{subsection-pagerank}
+
+The intuition here is that we can view $M$ as a directed graph, with
+an edge from $j$ to $i$ (representing that $j$ has ``endorsed'' $i$)
+if and only if $M_{ij} = 1$. Noting an analogy between these
 endorsements and links between web pages, we run the standard PageRank
-algorithm \cite{page_pagerank_1999} on this graph. (See section
-\ref{sec:whypagerank} for an explanation of why this is a realistic
+algorithm \cite{page_pagerank_1999} on this graph. (See
+\S{section-whypagerank} for an explanation of why this is a realistic
 algorithm for individuals to employ.)
 
-Given a matrix $M$, we compute the PageRank as follows. Let $\tM$ be
-the column-normalization of $M$, so that $\tM_i = M_i / \sum_j
-M_{ij}$. (We need a column-normalized matrix to run PageRank, since it
-is based on interpreting the matrix as a Markov chain). The idea of
-PageRank is to treat $\tM$ as a Markov chain and find its stationary
-probability. The Perron-Frobenius theorem says that $\tM$ has a unique
-non-negative eigenvector (and therefore a unique PageRank vector) if
-and only if it is irreducible. But we are not necessarily guaranteed
-that this is the case: there easily may be a player who has not been
-cooperated with. Therefore, we add some ``teleportation probability''
-$\alpha$ such that from any given state there is a probability
-$1-\alpha$ of going to a random state.
+Given $M$, we compute $r$ by PageRank as follows. Let $\tilde M =
+(\tilde M_{ij})$ the following column-normalisation of $M$:
+\[
+\tilde M_{ij} =
+\begin{cases}
+  1/N, & \sum_{k=0}^N M_{kj} = 0; \\ 
+  \alpha M_{ij} / \sum_{k=0}^N M_{kj} + (1-\alpha)/N, & \text{otherwise};
+\end{cases}
+\]
+for $1 \le i,j \le N$. The idea of PageRank is to treat this
+column-stochastic matrix $\tilde M$ as a Markov chain and find its
+stationary probability. The Perron-Frobenius theorem implies that
+$\tilde M$ has a unique non-negative eigenvector (and therefore a
+unique PageRank vector) if and only if it is irreducible. And indeed
+irreducibility is ensured here by the ``teleportation probability''
+$\alpha$.
 
-We compute PageRank using the iterated multiplication method; that is,
-let $u$ be a uniform vector, $r_0 = u$, and let $r_i =
-(1-\alpha)\tilde M r_{i-1} + \alpha u$. Once the difference between
-successive $r_i$ is small enough, the last computed vector is the
-PageRank.
+Thus we can compute PageRank using the iterated multiplication method.
+That is, let $r_0$ the uniform vector $(1/N,\ldots,1/N)$, and let $r_i =
+\tilde M^i r_0$ for $1 \le i \le \tau$. Then $r_\tau$ is (an
+approximation to) the PageRank.
 
-We make one modification to the PageRank algorithm. Because $r$ is
-normalized to the sum of the entries being $1$, this algorithm does
-not discriminate between the entire population cooperating and the
-entire population defecting. Therefore, at the end we multiply $r$ by
-$C/(N-1)$, where $C = \sum_{i,j} M_{ij}$ is the sum of the entries in
-the opinion matrix (a measure of how cooperative the current
-population is). Note that $0 \le C \le N(N-1)$, the lower bound
-occurring if all players are defecting and the upper bound if all
-players are cooperating. Hence the maximum of each $r_i$ is $1$.
+We make one modification to the PageRank algorithm to compute
+$r$. Note $r_\tau$ is normalized to be stochastic, and thus gives a
+relative notion of reputation. But since strategies are absolute,
+reputation needs to be as well. (For example, PageRank by itself does
+not distinguish between the entire population cooperating and the
+entire population defecting.) Therefore, we finally let
+\[
+r_k = \min\left(1,\sum_{1 \le i,j \le N} \frac{M_{ij}}{N-1}(r_\tau)_k\right)
+\]
+for $1 \le k \le n$. Here, $0 \le \sum_{1 \le i,j \le N} M_{ij} \le
+(N-1)^2$ is a measure of how cooperative the current population is.
 
-\subsection{Interaction protocol}
-\label{sec:inter_protocol}
-In each round $I$ ordered pairs $(i,j)$ of distinct players are
-chosen, each pair independent of the others (note that this means that
-in a given round, the same pair can be chosen more than once). Each
-$i$ has a choice to decrease its own fitness by $\omega$ to increase
-the fitness of $j$ by $b \omega$. The choice is made according to the
-strategy of player $i$: cooperation occurs if and only if $s_i <
-r_j$. If cooperation occurs, $M_{ij}$ is set to 1, otherwise
-$M_{ij}$ is set to $0$.
-
-We also tested one variant to the interaction protocol, which gives
-limited information to the opinion matrix: $M_{ij}$ is changed only
-with probability $p$, otherwise it is left at its previous value.
-
-\subsection{Strategy choice}
-Strategies were chosen uniformly at random from $[0,1]$, except that
-with probability $c$ the strategy was ``always donate'' and with
-probability $d$ the strategy was ``never donate.'' Since the opinion
-matrix starts with all zeros, the reputation vector starts out at all
-zero, so there is no way to seed cooperation without some
-unconditional cooperators. In all our tests, we used $c=d=0.05$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Analysis of model}
-\label{sec:analysis}
+\label{section-analysis}
+
 \subsection{Donation Game}
-As with the model of Nowak and Sigmund \cite{nowak_evolution_1998}, we
-use the one-shot donation game to remove all effects of direct
-reciprocity and focus only on the indirect.
+
+As in the model of Nowak and Sigmund \cite{nowak_evolution_1998}, we
+use the one-shot donation game in order to minimise effects of direct
+reciprocity.
 
 \subsection{Use of PageRank}
-\label{sec:whypagerank}
+\label{section-whypagerank}
 
 The PageRank algorithm is frequently used to calculate reputation in
-social networks \cite{pujol_extracting_2002}. There are a few features
-of PageRank that make it desirable for our simulation:
-\begin{enumerate}
+social networks \cite{pujol_extracting_2002}, and has an important
+property which makes it a natural candidate for our setting:
+\begin{itemize}
 \item
 The opinions of more generous players matter more. This is because
 more generous players have more endorsements pointing to them, and
@@ -310,204 +350,199 @@ resolving Leimar and Hammerstein's complaint
 \cite{leimar_evolution_2001} that reputation dynamics do not properly
 incentivize players.
 \item
-Conversely, the effects of selfishness against low-ranked individuals
-are minimized: low-reputation groups cannot unilaterally affect the
-PageRank graph by a large margin
-\cite{langville_deeper_2004}. Therefore, as mentioned above, generous
-individuals will not be unduly penalized for encountering a number of
-selfish individuals and refusing to cooperate.
-\end{enumerate}
+A nice consequence of this is that the effects of selfishness against
+low-ranked individuals are minimised: low-reputation groups cannot
+unilaterally affect the PageRank graph by a large margin
+\cite{langville_deeper_2004}. Therefore, generous individuals will not
+be unduly penalized for encountering a number of selfish individuals
+and refusing to cooperate.
+\end{itemize}
 
 \subsection{Interactions per round}
-\label{sec:inter_per_round}
+\label{section-inter_per_round}
 
-While it is customary to have every member of the population interact
-every round of the simulation, we chose instead to pick random pairs
-of members interact. This is because if two players are assured of
-encountering each other again in the future, the opinion
-matrix/PageRank system could essentially act as a proxy for a direct
-reciprocity calculation. To make sure that this effect was mitigated,
-we chose values for $I$ that ensured the two interacting organisms
-were not likely to encounter one another again before they died.
+It is a convention in many models to have every member of the
+population interact every round of the simulation. However, to study
+the regime in which direct reciprocity plays no significant role, we
+chose instead to pick a fixed number of random pairs of members to
+interact. 
 
 Specifically, in a population of $N$, since one player dies every
 round, each player dies with probability $1/N$ and so a player's
 lifespan is a geometrically distributed random variable with mean
 $N$. If we pick $I=N$, then on any given round and for any given
 players $A$ and $B$, player $A$ interacts with $B$ with probability
-$1/N$. Therefore if $I\le N$ we expect on average one interaction
-between any two given players before one dies. This should be enough
-to minimize the effects of our model proxying direct reciprocity.
+$1/N$. Therefore if $I\le N$ we expect on average at most one
+interaction between any two given players before one dies. This should
+be enough to minimize the effects of our model proxying direct
+reciprocity.
 
 \subsection{Reference implementation}
-\label{sec:implementation}
+\label{section-implementation}
 
 We implemented our simulation in Python using SciPy, NumPy, Weave, and
 Matplotlib. A Git repository of our implementation can be found at
-\url{https://github.com/benskuhn/math153}.
+\url{https://github.com/arponr/math243}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Results}
-\label{sec:results}
+\label{section-results}
+
+Throughout our experiments we use $b=5$, $\omega=.1$, $\mu=.0001$,
+$c=d=.05$, and $\tau=10$ (except in).
 
 \subsection{Dependence on interactions per round}
 
-For each of the population sizes $N \in \{10,20,50,100\}$, increasing
-the number of iterations per round increases the probability that
-cooperation will fixate, as shown in Figures
-\ref{fig:pop10iter}--\subref{fig:pop100iter} (with $b=5$, $\om=0.1,$
-and $I$ ranging over $10,20,50,100,200,500$, excluding values greater
-than $I^2$). This is expected: a larger number of interactions per
-round increases the potential effects of proxying direct reciprocity
-(see section \ref{sec:inter_per_round}). It also means that the
-opinion matrix more closely reflects the current strategy
-distribution, and thus a player's reputation is a better indicator of
-their current cooperativeness, as shown in Figures
-\ref{fig:lag50}--\subref{fig:lag500}.
+We first examine how, for fixed population size, varying the number of
+interactions per round affects the amount of cooperation that
+occurs. To do this, for $N \in \{20,50,100\}$ and $I \in
+\{10,20,50,100,200\}$, we plot a histogram of the proportion of
+cooperative interactions for the first $10000$ rounds, over $50$
+trials (Figures \ref{figure-N20}--\subref{figure-N100}).
+
+It is evident that the absorbption rate of cooperation increases as
+$I$ increases, for each $N$. This is expected, since a larger number
+of interactions per round:
+\begin{enumerate}
+\item increases the potential effects of proxying
+  direct reciprocity (see \S\ref{section-inter_per_round});
+\item means that the opinion matrix more closely reflects the current
+  strategy distribution, and thus a player's reputation is a better
+  indicator of their current cooperativeness, as shown in Figures
+  \ref{figure-track50}--\subref{figure-track200}.
+\end{enumerate}
 
 \begin{figure}[h!tbp]  
-  \begin{subfigure}{.31\linewidth}
+  \begin{subfigure}{.485\linewidth}
     \centering
-    \includegraphics[width=\linewidth]{pop10iter.png}
-    \caption{$N=10$ and $I = 10, 20, 50$ from left to right. \\}
-    \label{fig:pop10iter}
+    \includegraphics[width=\linewidth]{N20.png}
+    \caption{$N=20$}
+    \label{figure-N20}
   \end{subfigure}
   \hspace{.01\linewidth}
-  \begin{subfigure}{.31\linewidth}  
+  \begin{subfigure}{.485\linewidth}  
     \centering
-    \includegraphics[width=\linewidth]{pop20iter.png}
-    \caption{$N=20$ and $I = 10,20,50,100,200$ from left to right.}
-    \label{fig:pop20iter}
+    \includegraphics[width=\linewidth]{N50.png}
+    \caption{$N=50$}
+    \label{figure-N50}
   \end{subfigure}
-  \hspace{.01\linewidth}
-  \begin{subfigure}{.31\linewidth}
+  \begin{subfigure}{.485\linewidth}
     \centering
-    \includegraphics[width=\linewidth]{pop100iter.png}
-    \caption{$N=100$ and $I = 10,20,50,100,200,500$ from left to
-      right.}
-    \label{fig:pop100iter}
+    \includegraphics[width=\linewidth]{N100.png}
+    \caption{$N=100$}
+    \label{figure-N100}
   \end{subfigure}
-  \caption{Histograms of proportion of cooperation after 25000 rounds}
+  \caption{Histograms of proportion of cooperation over $10000$ rounds,
+    varying $I \in \{10,20,50,100,200\}$}
 \end{figure}
 
 \begin{figure}[h!tbp]
   \begin{subfigure}{.485\linewidth}
-    \includegraphics[width=\textwidth]{lag50.png}
+    \includegraphics[width=\linewidth]{track50.png}
     \caption{$I=50$}
-    \label{fig:lag50}
+    \label{figure-track50}
   \end{subfigure}
   \hspace{.01\linewidth}
   \begin{subfigure}{.485\linewidth}
-    \includegraphics[width=\textwidth]{lag500.png}
-    \caption{$I=500$}
-    \label{fig:lag500}
+    \includegraphics[width=\linewidth]{track200.png}
+    \caption{$I=200$}
+    \label{figure-track200}
   \end{subfigure}
 \caption{A comparison of average number of cooperations (red) and
-  average reputation (green) with $b=5,N=100$ over 1000 steps. Clearly
+  average reputation (green) with $N=100$ over $10000$ steps. Clearly
   when the number of interactions higher, average reputation tracks
   current average cooperativeness much more closely.}
 \end{figure}
 
 \subsection{Dependence on population size}
-\label{sec:pop_size}
+\label{section-pop_size}
 
-In an extremely counter-intuitive twist, we found that larger
-populations had a \emph{higher} probability of fixating at cooperation
-with $I=N$ (Figure \ref{fig:varyN5000}--\subref{fig:varyN25000}). This
-implies that the number of interactions per round required to have a
-probability $p$ of cooperation fixating grows significantly
-\emph{sublinearly} with increasing population size rather than
-linearly as our argument in section \ref{sec:inter_per_round} might
-suggest. We were unable to determine why this surprising result holds
-and admit extreme bafflement.
+We next examine the effect of varying $N \in \{10, 20, 50, 100,
+200\}$, while keeping $I=N$, on cooperativity. Figure
+\ref{figure-NeqM} shows the results in the same way as in the previous
+section. We see that cooperativity increases as $N=I$ increases, and
+indeed this makes sense. An equivalent way of stating this result is
+that the necessary number of interactions $I$ to achieve a given
+proportion of cooperation is sublinear in $N$. Recall from our
+analysis in \S\ref{section-inter_per_round} that we need $N=I$ if we
+want each individual to interact with each other individual once on
+average. This result is saying then that it is unnecessary for all
+individuals to act with each other, as they receive enough information
+in reputation via other individuals' opinions.
 
 \begin{figure}[h!tbp]
-  \begin{subfigure}{.31\linewidth}
     \centering
-    \includegraphics[width=\linewidth]{varyN5000.png}
-    \caption{After $5000$ rounds}
-    \label{fig:varyN5000}
-  \end{subfigure}
-  \hspace{.01\linewidth}
-  \begin{subfigure}{.31\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{varyN12500.png}
-    \caption{After $12500$ rounds}
-    \label{fig:varyN12500}
-  \end{subfigure}
-  \hspace{.01\linewidth}
-  \begin{subfigure}{.31\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{varyN25000.png}
-    \caption{After $25000$ rounds}
-    \label{fig:varyN25000}
-  \end{subfigure}
-  \caption{Histograms of proportion of cooperation with
-    $N=I=10,20,50,100,200$ from left to right}
+    \includegraphics[width=.485\linewidth]{NeqM.png}
+    \caption{Histograms of proportion of cooperation over $10000$
+      rounds with $N=I \in \{10,20,50,100,200\}$}
+    \label{figure-NeqM}
 \end{figure}
 
 \subsection{Long-range behavior}
-\label{sec:longrange}
-Over hundreds of thousands of rounds the typical behavior (with $b=2$,
-$c = d = 0.05$, $N = I = 100$, $\omega = 0.1$, $\mu = 0.0001$) can be
-seen in Figures \ref{fig:really}--\subref{fig:what} below.
+\label{section-longrange}
+
+Over hundreds of thousands of rounds the typical behavior can be
+seen in Figure \ref{figure-long}.
+
+\begin{figure}[h!tbp]
+  \includegraphics[width=.6\linewidth]{long.png}
+  \caption{Behaviour over $10^6$ rounds}
+  \label{figure-long}
+\end{figure}
+
+Recall that strategy being less than reputation indicates
+cooperativity, so each of these trial demonstrates high absorbptive
+rate of cooperativity. This replicates Sigmund and Nowak's result
+\cite{nowak_evolution_1998}, although with a much lower benefit/cost
+ratio than used in that model. 
+
+Note also that in one trial, cooperation takes over after defection is
+stable, with strategy ending up below $0$. This indicates that
+cooperation can dominate after a critical mass of unconditional
+cooperators kickstarts an increase in reputations and average strategy
+falls below zero as everyone becomes an unconditional cooperator by
+random drift. Of course the existence of unconditional defectors
+allows the opposite to occur as well.
+
+\subsection{Number of PageRank iterations}
+
+We finally examine how, for fixed population size, varying the number
+of iterations in the PageRank computation affects the amount of
+cooperation that occurs. We do this in the same way as previous
+sections, with $N=I \in \{20,100\}$ and varying $\tau \in
+\{1,2,5,10,20\}$. The results are found in Figures
+\ref{figure-iterN20}--\subref{figure-iterN100}.
 
 \begin{figure}[h!tbp]
   \begin{subfigure}{.485\linewidth}
-    \includegraphics[width=\linewidth]{really.png}
-    \caption{In the first two runs, cooperation emerges even after a
-      selfish strategy has fixated.}
-    \label{fig:really}
+    \includegraphics[width=\linewidth]{iterN20.png}
+    \caption{$N=I=20$}
+    \label{figure-iterN20}
   \end{subfigure}
   \hspace{.01\linewidth}
   \begin{subfigure}{.485\linewidth}
-    \includegraphics[width=\linewidth]{what.png}
-    \caption{Note how in the first run, cooperation is invaded by a
-      high-threshold, selfish strategy.}
-    \label{fig:what}
+    \includegraphics[width=\linewidth]{iterN100.png}
+    \caption{$N=I=100$}
+    \label{figure-iterN100}
   \end{subfigure}
-    \caption{$10^6$ and $2 \times 10^6$ rounds with the parameters
-      listed in section \ref{sec:longrange}. Green: average
-      reputation, blue: average strategy.}
+\caption{Histograms of proportion of cooperation over $10000$
+      rounds with $\tau \in \{1,2,5,10,20\}$}
 \end{figure}
 
-This replicates Sigmund and Nowak's result
-\cite{nowak_evolution_1998}, although with a much lower benefit/cost
-ratio than used in that model. With each step taking many hundred
-thousand time intervals, cooperation fixates after a critical mass of
-cooperators kickstarts an increase in reputations, average strategy
-falls below zero as everyone becomes an unconditional cooperator by
-random drift, and finally unconditional defectors invade and take over
-starting the cycle again. As is often seen for invasions by new types
-in models like this, many of the transitions can fail the first times
-they start to occur.
+Evidently the number of PageRank iterations has almost no impact on
+cooperativity over the first 10000 rounds. This is quite surprising:
+for example, one iteration of PageRank does not have at all the
+motivating property of discounting the opinions of selfish individuals
+when calculating reputation. Our only hope for making sense of this is
+that we need to consider the model over a longer period of time, but
+alas we did not have this longer period of time (or computational
+power) to test this hypothesis.
 
-The first step is dependent on there being unconditional cooperators
-and the last on there being unconditional defectors.
-
-\subsection{Limited information}
-
-Finally, we tested our simulation with the limited information variant
-detailed in section \ref{sec:inter_protocol}. We tested a simulation
-with $b=2, c=d=0.05, N=100$, and recording probability ranging from
-$p=0.1$ to $p=1$ in increments of 0.1. Figure \ref{fig:gos} summarizes
-our findings: even with very low probability that an interaction will
-be recorded, there is still a small probability that cooperation will
-fixate. Note that because each individual makes many interactions,
-this compensates for the low probability and we are able to get
-cooperation even when $p < \f{b}{c}$, which is the threshold for
-all-or-nothing incomplete information \cite{nowak_five_2006}.
-
-\begin{figure}[h!tbp]
-\includegraphics[width=.5\textwidth]{GOS.png}
-\caption{Histogram of proportion of cooperations per round after 64
-  trials of 25,000 rounds with $N=I=100, B=2,c=d=0.05,$ and $p \in
-  \{0.1,0.2,\dots,1\}$. It is evident that even for very low values of
-  $p$, cooperation occasionally fixates.}
-\label{fig:gos}
-\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Conclusion}
-\label{sec:conclusion}
+\label{section-conclusion}
 
 We have developed a model for reputation dynamics with the following
 benefits:
@@ -525,20 +560,20 @@ benefits:
 
 This model achieves evolution of indirect reciprocity in many
 realistic scenarios, including much more realistic benefit/cost ratios
-than previously observed. Furthermore, it is robust to limited
-information and shows the same ``cycling'' behavior observed in other
-models at large timescales \cite{nowak_evolution_1998}.
+than previously observed. Furthermore, it shows the same ``cycling''
+behavior observed in other models at large timescales
+\cite{nowak_evolution_1998}.
 
 Obviously there are many more variables in this model than we had time
 or computational power to analyze. It certainly merits further
 investigation to determine its full behavior, extend it, and find all
 the connections between various parameters, and there are still some
-unknowns (such as the strange sublinear dependence on population size
-detailed in section \ref{sec:pop_size}). We include some ideas for
+unknowns (such as the strange lack of dependence on the number of
+PageRank iterations discussed above). We include some ideas for
 further work below.
 
 \section{Further directions}
-\label{sec:further}
+\label{section-further}
 
 \subsection{More data}
 
@@ -549,11 +584,13 @@ we would have liked, given the number of parameters and variants.
 \subsection{Analytic results}
 
 Because of the nontrivial way in which past interactions affect the
-current round, analytic results on this model are rather
-difficult. However, mathematical bounds on PageRank obtained by
+current round, analytic results on this model seem rather
+difficult. There exist mathematical bounds on PageRank obtained by
 Bianchini et al. \cite{bianchini_Inside_2005} and Langville et
-al. \cite{langville_deeper_2004} suggest that some theoretical results
-may be possible.
+al. \cite{langville_deeper_2004}, which may suggest that some
+theoretical results may be possible, but this is not clear at all. It
+would probably be fruitful to somehow simplify the model in order to
+do some precise analysis.
 
 \subsection{Potential modifications}
 
